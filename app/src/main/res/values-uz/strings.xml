@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Paynet</string>
+    <string name="language">Til</string>
+    <string name="for_being_client">Mijoz bo\'lish uchun</string>
+    <string name="phone">Telefon raqam</string>
+    <string name="password">Parol</string>
+    <string name="first_name">Ism</string>
+    <string name="fill_fields">Maydonlarni to\'ldiring</string>
+    <string name="last_name">Familiya</string>
+    <string name="male">Erkak</string>
+    <string name="female">Ayol</string>
+    <string name="continue_text">Davom etish</string>
+    <string name="write_code_from_sms">SMSdagi kodni kiriting</string>
+    <string name="code_send_to_phone">raqamiga kod yubordik</string>
+    <string name="new_code_send">Yangi kodni yuborish</string>
+    <string name="enter_pin_code">Pin-kodni kiriting</string>
+    <string name="your_phone">Telefon raqamingiz</string>
+    <string name="repeat_pin_code">Pin-kodni qayta kiriting</string>
+    <string name="sign_in_text">yoki tizimga kirishingiz mumkin</string>
+    <string name="wrong_password">Parol xato</string>
+    <string name="password_not_matches">Xato Qayta yarating</string>
+    <string name="paynet_card">Paynet karta</string>
+</resources>

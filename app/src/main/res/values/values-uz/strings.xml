@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Paynet</string>
+    <string name="language">Til</string>
+    <string name="for_being_client">Mijoz bo\'lish uchun</string>
+    <string name="phone">Telefon raqam</string>
+    <string name="password">Parol</string>
+    <string name="first_name">Ism</string>
+    <string name="fill_fields">Maydonlarni to\'ldiring</string>
+    <string name="last_name">Familiya</string>
+    <string name="male">Erkak</string>
+    <string name="female">Ayol</string>
+    <string name="continue_text">Davom etish</string>
+</resources>

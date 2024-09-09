@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Paynet</string>
+    <string name="language">Language</string>
+    <string name="for_being_client">For being client</string>
+    <string name="phone">Phone</string>
+    <string name="password">Password</string>
+    <string name="first_name">First Name</string>
+    <string name="fill_fields">Fill fields</string>
+    <string name="last_name">Last Name</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="continue_text">Continue</string>
+    <string name="write_code_from_sms">Write code from SMS</string>
+    <string name="code_send_to_phone">code send to phone number</string>
+    <string name="new_code_send">Send new code</string>
+    <string name="enter_pin_code">Enter Pin code</string>
+    <string name="your_phone">Your phone</string>
+    <string name="repeat_pin_code">Repeat Pin code</string>
+    <string name="sign_in_text">or you can sign in</string>
+    <string name="wrong_password">Wrong Pincode</string>
+    <string name="password_not_matches">Wrong Recreate</string>
+    <string name="paynet_card">Paynet card</string>
+    <string name="main">Main</string>
+    <string name="transfer">Transfer</string>
+    <string name="payment">Payment</string>
+    <string name="history">History</string>
+</resources>
