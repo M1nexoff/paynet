@@ -1,6 +1,8 @@
 package uz.gita.m1nex.entity.data.util
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import retrofit2.Response
 import uz.gita.m1nex.core.MessageData
 import uz.gita.m1nex.core.ResultData
@@ -26,6 +28,10 @@ internal fun <T> Response<BaseResponse<T>>.toResultData(): ResultData<T> {
 
 fun <T> Response<T>.toResultData(errorHandler: ((String) -> String)? = null): ResultData<T> = when (code()) {
     in 200..299 -> ResultData.success(body()!!)
+    in 400..499 -> {
+        val errorMessage = parseErrorMessage(errorBody()?.string())
+        ResultData.fail(errorMessage)
+    }
     in 500..599 -> ResultData.fail(getErrorMessage(errorHandler))
     else -> ResultData.fail(getErrorMessage(errorHandler))
 }
@@ -43,4 +49,16 @@ private fun <T> Response<T>.getErrorMessage(errorHandler: ((String) -> String)?)
 fun <T, R> ResultData<T>.mapTo(mapper: (T) -> R): ResultData<R> = when {
     isSuccess -> ResultData.success(mapper(asSuccess.data))
     else -> asFail
+}
+
+fun parseErrorMessage(json: String?): String {
+    return try {
+        val gson = Gson()
+        val jsonObject = gson.fromJson(json, JsonObject::class.java)
+        jsonObject.get("message")?.asString ?: "Unknown error"
+    } catch (e: JsonSyntaxException) {
+        "Error parsing error message"
+    } catch (e: Exception) {
+        "Unknown error occurred"
+    }
 }

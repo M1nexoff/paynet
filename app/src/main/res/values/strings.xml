@@ -24,4 +24,6 @@
     <string name="transfer">Transfer</string>
     <string name="payment">Payment</string>
     <string name="history">History</string>
+    <string name="error_phone_empty">Phone must be filled\n</string>
+    <string name="error_password_too_short">Passowrd need be longer</string>
 </resources>

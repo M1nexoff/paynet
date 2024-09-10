@@ -1,5 +1,6 @@
 package uz.gita.m1nex.usecase.splash
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import uz.gita.m1nex.core.ResultData
 import uz.gita.m1nex.core.data.LaunchData
@@ -15,5 +16,6 @@ class SplashUseCaseImpl @Inject constructor(
 
     override fun checkLaunchMode(): Flow<ResultData<LaunchData>> = flowWithCatch {
         emit(ResultData.success(appRepository.getLaunchMode()))
+        Log.d("TTT", "checkLaunchMode: ")
     }
 }

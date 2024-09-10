@@ -50,7 +50,7 @@ fun AppButton(
         onClick = onClick,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (enabled) Color(0xFF17AD4F) else Color(0xFFEBECEE),
+            containerColor = if (enabled) Color(0xFF17AD4F) else Color(0xFF85E29B),
             contentColor = if (enabled) Color.White else Color(0xFF8A8B8F)
         ),
         shape = RoundedCornerShape(100),

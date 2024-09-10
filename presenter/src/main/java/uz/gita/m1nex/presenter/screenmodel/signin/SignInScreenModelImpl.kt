@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import uz.gita.m1nex.core.onFailure
 import uz.gita.m1nex.core.onSuccess
@@ -40,6 +41,8 @@ class SignInScreenModelImpl @Inject constructor(
             SignInContract.Intent.Back -> {
                 direction.navigateToBack()
             }
+
+            SignInContract.Intent.Language ->{}
         }
     }
 

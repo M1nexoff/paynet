@@ -42,6 +42,7 @@ class VerifyScreenModelImpl @Inject constructor (
                         reduce { VerifyContract.UiState.Error(it) }
                     }
                     .launchIn(screenModelScope)
+
             }
 
             is VerifyContract.Intent.SignUpVerify -> {

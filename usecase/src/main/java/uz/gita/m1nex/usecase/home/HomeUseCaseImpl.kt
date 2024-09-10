@@ -3,6 +3,8 @@ package uz.gita.m1nex.usecase.home
 import kotlinx.coroutines.flow.Flow
 import uz.gita.m1nex.core.ResultData
 import uz.gita.m1nex.core.flowWithCatch
+import uz.gita.m1nex.core.onSuccess
+import uz.gita.m1nex.core.success
 import uz.gita.m1nex.entity.data.model.request.UpdateInfoRequest
 import uz.gita.m1nex.entity.data.model.respone.BasicInfoResponse
 import uz.gita.m1nex.entity.data.model.respone.FullInfoResponse
@@ -18,9 +20,17 @@ class HomeUseCaseImpl @Inject constructor(
         emit(result)
     }
 
-    override fun getBasicUserInfo(): Flow<ResultData<BasicInfoResponse>> = flowWithCatch {
+    override fun getBasicUserInfo(): Flow<ResultData<BalanceAndName>> = flowWithCatch {
         val result = repository.getBasicUserInfo()
-        emit(result)
+        val result2 = repository.getTotalBalance()
+        result.onSuccess {
+            val name = firstName
+            result2.onSuccess {
+
+                emit(ResultData.success(BalanceAndName(this, name)))
+            }
+        }
+//        emit()
     }
 
     override fun getFullUserInfo(): Flow<ResultData<FullInfoResponse>> = flowWithCatch {
@@ -38,3 +48,4 @@ class HomeUseCaseImpl @Inject constructor(
         emit(result)
     }
 }
+data class BalanceAndName(val balance: Int, val name: String)

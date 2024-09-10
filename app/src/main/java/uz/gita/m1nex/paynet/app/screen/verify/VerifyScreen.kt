@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -242,13 +243,10 @@ fun VerifyScreenContent(
                         .size(28.dp)
                 )
                 Text(
-                    fontFamily = main,
-                    fontStyle = FontStyle.Normal,
                     text = if (remainingTime.value > 0) "${remainingTime.value} sek" else stringResource(id = R.string.new_code_send),
                     color = if (remainingTime.value > 0) Color.Gray else Color.White,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
                     modifier = Modifier.fillMaxWidth(0.7f)
                 )
             }

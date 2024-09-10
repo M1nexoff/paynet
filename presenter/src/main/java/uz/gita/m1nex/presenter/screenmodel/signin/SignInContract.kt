@@ -20,15 +20,16 @@ interface SignInContract {
 
     sealed interface UiState {
         data object Progress : UiState
-        data class Error(val message: MessageData) : UiState
+        data class Error(val message: MessageData, val isNetworkError: Boolean = false) : UiState
         data class Default(val signInRequest: SignInRequest) : UiState
     }
 
+
     sealed interface SideEffect {
-        data class Toast(val message: String): SideEffect
     }
 
     sealed interface Intent {
+        data object Language : Intent
         data class SignIn(val signInRequest: SignInRequest) : Intent
         data object Back : Intent
     }

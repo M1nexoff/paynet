@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,39 +30,34 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
-import androidx.core.util.toRange
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getScreenModel
-import cafe.adriel.voyager.hilt.getViewModel
 import com.ozcanalasalvar.datepicker.compose.component.SelectorView
-import com.ozcanalasalvar.datepicker.compose.datepicker.WheelDatePicker
 import com.ozcanalasalvar.datepicker.model.Date
 import com.ozcanalasalvar.datepicker.ui.theme.PickerTheme
-import com.ozcanalasalvar.datepicker.ui.theme.colorLightPrimary
 import com.ozcanalasalvar.datepicker.ui.theme.colorLightTextPrimary
 import com.ozcanalasalvar.datepicker.ui.theme.lightPallet
 import com.ozcanalasalvar.datepicker.utils.DateUtils
@@ -74,18 +69,17 @@ import com.ozcanalasalvar.datepicker.utils.withYear
 import com.ozcanalasalvar.wheelview.SelectorOptions
 import com.ozcanalasalvar.wheelview.WheelView
 import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.m1nex.core.getText
 import uz.gita.m1nex.core.hiltScreenModel
 import uz.gita.m1nex.entity.data.model.request.SignUpRequest
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.component.AppButton
 import uz.gita.m1nex.paynet.app.ui.theme.component.MaskVisualTransformation
-import uz.gita.m1nex.paynet.app.ui.theme.main
+import uz.gita.m1nex.paynet.app.ui.theme.setLanguage
 import uz.gita.m1nex.presenter.screenmodel.signup.SignUpContract
-import uz.gita.m1nex.presenter.screenmodel.signup.SignUpScreenModelImpl
 import java.text.DateFormatSymbols
 import java.util.Calendar
-import kotlin.math.log
-import kotlin.random.Random
+import java.util.Locale
 
 class SignUpScreen : Screen {
     @Composable
@@ -104,27 +98,39 @@ private fun SignUpScreenContent(
     state: State<SignUpContract.UiState>,
     eventDispatcher: (SignUpContract.Intent) -> Unit
 ) {
-    val phone = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val firstName = remember { mutableStateOf("") }
-    val lastName = remember { mutableStateOf("") }
-    val bornDate = remember { mutableStateOf("") }
-    val gender = remember { mutableStateOf(false) }
-    val nextButtonEnabled = remember { mutableStateOf(true) }
-    Box {
+
+    val phone = rememberSaveable { mutableStateOf("") }
+    val password = rememberSaveable { mutableStateOf("") }
+    val firstName = rememberSaveable { mutableStateOf("") }
+    val lastName = rememberSaveable { mutableStateOf("") }
+    val bornDate = rememberSaveable { mutableStateOf("") }
+    val gender = rememberSaveable { mutableStateOf(false) }
+    val update = remember { mutableStateOf(0) }
+    val error = remember { mutableStateOf<String?>(null) }
+
+    val nextButtonEnabled = rememberSaveable { mutableStateOf(true) }
+    Box(modifier = Modifier.fillMaxSize()) {
         when (state.value) {
             is SignUpContract.UiState.Default -> {}
             is SignUpContract.UiState.Error -> {
                 nextButtonEnabled.value = true
+                error.value = (state.value as SignUpContract.UiState.Error).message.getText()
             }
+
             SignUpContract.UiState.Progress -> {
-                CircularProgressIndicator(progress = {0.5f},modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    progress = { 0.5f },
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
+
+        val focusRequesters = List(4) { FocusRequester() }
 
         Column(
             Modifier
                 .fillMaxSize()
+                .padding(bottom = 8.dp)
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -133,28 +139,48 @@ private fun SignUpScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
+                val context = LocalContext.current
                 Button(
                     modifier = Modifier
                         .align(Alignment.CenterEnd),
-                    onClick = { },
+                    onClick = {
+                        Log.d("QQQ", "SignUp: lang")
+                        when (Locale.getDefault().language) {
+                            "en" -> {
+                                setLanguage(Locale("uz"), context)
+                            }
+
+                            else -> {
+                                setLanguage(Locale.ENGLISH, context)
+                            }
+
+                        }
+                        update.value += 1
+                    },
                     shape = RoundedCornerShape(35),
-                    colors = ButtonDefaults.buttonColors(containerColor = LightGray),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(
+                            red = 230,
+                            green = 224,
+                            blue = 233
+                        )
+                    ),
                 ) {
+                    update.value
                     Text(
-                        modifier = Modifier.padding(end = 4.dp),
                         text = stringResource(id = R.string.language),
-                        fontSize = 18.sp,
                         color = Color.Black,
-                        fontFamily = main,
-                        fontStyle = FontStyle.Normal
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Image(
                         modifier = Modifier
                             .width(56.dp)
-                            .height(32.dp)
-                            .padding(start = 4.dp),
-                        painter = painterResource(id = R.drawable.uz),
-                        contentDescription = null
+                            .height(32.dp),
+                        painter = when (Locale.getDefault().language) {
+                            "uz" -> painterResource(id = R.drawable.uz)
+                            else -> painterResource(id = R.drawable.en)
+                        },
+                        contentDescription = if (update.value != -1) null else ""
                     )
                 }
             }
@@ -162,39 +188,50 @@ private fun SignUpScreenContent(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(76.dp),
-                painter = painterResource(id = R.drawable.paynet),
+                painter = if (update.value != -1) painterResource(id = R.drawable.paynet) else painterResource(
+                    id = R.drawable.paynet
+                ),
                 contentDescription = null
             )
             Text(
                 text = stringResource(id = R.string.fill_fields),
-                fontSize = 20.sp,
                 color = Color.Black,
-                fontStyle = FontStyle.Normal,
-                fontFamily = main,
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
                 text = stringResource(id = R.string.for_being_client),
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Normal,
+                style = MaterialTheme.typography.bodyLarge,
+
                 color = Color(0xFF8A8A8A),
-                fontFamily = main,
             )
 
             TextField(
                 singleLine = true,
-                placeholder = { Text(stringResource(id = R.string.phone)) },
+                placeholder = {
+                    if (update.value != -1) {
+
+                    }
+                    Text(stringResource(id = R.string.phone))
+                },
                 value = phone.value,
                 onValueChange = { input ->
                     if (input.length <= 9 && input.isDigitsOnly()) {
                         phone.value = input
                     }
+                    if (input.length == 9) {
+                        focusRequesters[1].requestFocus()
+                    }
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp)
-                    .height(52.dp)
+                    .height(56.dp)
+                    .focusRequester(focusRequesters[0])
                     .background(Color.Transparent),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -205,18 +242,24 @@ private fun SignUpScreenContent(
             )
             TextField(
                 singleLine = true,
-                placeholder = { Text(stringResource(id = R.string.password)) },
+                placeholder = {
+                    update.value!=-1
+                    Text(stringResource(id = R.string.password)) },
                 value = password.value,
                 onValueChange = { input ->
                     if (input.length <= 12 && !(input.contains(" "))) {
                         password.value = input
                     }
                 },
+                keyboardActions = KeyboardActions(
+                    onDone = { focusRequesters[2].requestFocus() }
+                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp)
+                    .focusRequester(focusRequesters[1])
                     .height(56.dp)
                     .background(Color.Transparent),
                 colors = TextFieldDefaults.colors(
@@ -227,18 +270,24 @@ private fun SignUpScreenContent(
             )
             TextField(
                 singleLine = true,
-                placeholder = { Text(stringResource(id = R.string.first_name)) },
+                placeholder = {
+                    update.value!=-1
+                    Text(stringResource(id = R.string.first_name)) },
                 value = firstName.value,
                 onValueChange = { input ->
                     if (input.length <= 12 && !(input.any { !it.isLetter() })) {
                         firstName.value = input
                     }
                 },
+                keyboardActions = KeyboardActions(
+                    onDone = { focusRequesters[3].requestFocus() }
+                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp)
+                    .focusRequester(focusRequesters[2])
                     .height(56.dp)
                     .background(Color.Transparent),
                 colors = TextFieldDefaults.colors(
@@ -249,7 +298,9 @@ private fun SignUpScreenContent(
             )
             TextField(
                 singleLine = true,
-                placeholder = { Text(stringResource(id = R.string.last_name)) },
+                placeholder = {
+                    update.value!=-1
+                    Text(stringResource(id = R.string.last_name)) },
                 value = lastName.value,
                 onValueChange = { input ->
                     if (input.length <= 15 && !(input.any { !it.isLetter() })) {
@@ -261,6 +312,7 @@ private fun SignUpScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp)
+                    .focusRequester(focusRequesters[3])
                     .height(56.dp)
                     .background(Color.Transparent),
                 colors = TextFieldDefaults.colors(
@@ -338,17 +390,27 @@ private fun SignUpScreenContent(
 
             }
             var enabled = false
-            if (password.value.length >= 8 && phone.value.length == 9 && firstName.value.length >= 3 && lastName.value.length >= 3){
+            if (password.value.length >= 8 && phone.value.length == 9 && firstName.value.length >= 3 && lastName.value.length >= 3) {
                 enabled = true
                 Log.d("TTT", "SignUpScreenContent: $enabled")
             }
-            Box(modifier = Modifier
-                .fillMaxHeight(1f)
-                .fillMaxWidth(0.9f)) {
+            if (error.value != null){
+                Text(
+                    text = error.value!!,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Red,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight(1f)
+                    .fillMaxWidth(0.9f)
+            ) {
                 Column(
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .align(Alignment.Center)) {
+                ) {
                     AppButton(
                         text = stringResource(id = R.string.continue_text),
                         onClick = {
@@ -446,7 +508,10 @@ fun WheelDatePicker(
                     selection = maxOf(days.indexOf(selectedDate.day), 0),
                     itemCount = days.size,
                     rowOffset = offset,
-                    selectorOption = SelectorOptions().copy(selectEffectEnabled = selectorEffectEnabled, enabled = false),
+                    selectorOption = SelectorOptions().copy(
+                        selectEffectEnabled = selectorEffectEnabled,
+                        enabled = false
+                    ),
                     onFocusItem = {
                         selectedDate = selectedDate.withDay(days[it])
                     },
@@ -466,7 +531,10 @@ fun WheelDatePicker(
                 selection = maxOf(months.indexOf(selectedDate.month), 0),
                 itemCount = months.size,
                 rowOffset = offset,
-                selectorOption = SelectorOptions().copy(selectEffectEnabled = selectorEffectEnabled, enabled = false),
+                selectorOption = SelectorOptions().copy(
+                    selectEffectEnabled = selectorEffectEnabled,
+                    enabled = false
+                ),
                 onFocusItem = {
                     selectedDate = selectedDate.withMonth(months[it])
                 },
@@ -487,7 +555,10 @@ fun WheelDatePicker(
                 itemCount = years.size,
                 rowOffset = offset,
                 isEndless = years.size > offset * 2,
-                selectorOption = SelectorOptions().copy(selectEffectEnabled = selectorEffectEnabled, enabled = false),
+                selectorOption = SelectorOptions().copy(
+                    selectEffectEnabled = selectorEffectEnabled,
+                    enabled = false
+                ),
                 onFocusItem = {
                     selectedDate = selectedDate.withYear(years[it])
                 },
@@ -512,8 +583,7 @@ fun WheelDatePicker(
                 ),
         ) {}
 
-        SelectorView(darkModeEnabled= darkModeEnabled, offset = offset)
-
+        SelectorView(darkModeEnabled = darkModeEnabled, offset = offset)
 
 
     }
@@ -524,7 +594,11 @@ fun WheelDatePicker(
 @Preview
 @Composable
 fun SignUpScreenContentPreview() {
-    val state = remember { mutableStateOf<SignUpContract.UiState>(SignUpContract.UiState.Default(SignUpRequest("", "", "", "", "", ""))) }
+    val state = remember {
+        mutableStateOf<SignUpContract.UiState>(
+            SignUpContract.UiState.Default(SignUpRequest("", "", "", "", "", ""))
+        )
+    }
     SignUpScreenContent(
         state = state, eventDispatcher = {}
     )

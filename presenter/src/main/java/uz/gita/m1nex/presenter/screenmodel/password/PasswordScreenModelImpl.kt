@@ -56,8 +56,7 @@ class PasswordScreenModelImpl @Inject constructor(
     }
 
     private var password = ""
-    override val container: Container<PasswordContract.UiState, SignUpContract.SideEffect> =
-        container(getDefault())
+    override val container: Container<PasswordContract.UiState, SignUpContract.SideEffect> = container(getDefault())
 
     private fun getDefault() = PasswordContract.UiState.Default
 }

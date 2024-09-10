@@ -1,5 +1,6 @@
 package uz.gita.m1nex.paynet.app.ui.theme
 
+import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +11,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import java.util.Locale
 
 // Define the light and dark color schemes
 private val DarkColorScheme = darkColorScheme(
@@ -43,7 +46,16 @@ fun PaynetOfficialTheme(
         else -> LightColorScheme
     }
 
-
+    val systemUiController = rememberSystemUiController()
+    if(darkTheme){
+        systemUiController.setSystemBarsColor(
+            color = Color.DarkGray
+        )
+    }else{
+        systemUiController.setSystemBarsColor(
+            color = Color(red = 230, green = 224, blue = 233)
+        )
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -51,3 +63,12 @@ fun PaynetOfficialTheme(
         content = content
     )
 }
+
+fun setLanguage(language: Locale, context: Context){
+    val config = context.resources.configuration
+    java.util.Locale.setDefault(language)
+    config.setLocale(language)
+    context.createConfigurationContext(config)
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+}
+

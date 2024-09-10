@@ -24,41 +24,24 @@ class HomeRepositoryImpl @Inject constructor(
 ) : HomeRepository {
 
     override suspend fun getTotalBalance(): ResultData<Int> = withContextSafety(Dispatchers.IO) {
-        homeApi.getTotalBalance()
-            .toResultData()
-            .onSuccess { ResultData.success(totalBalance) }
-            .onFail { ResultData.fail(message) }
+        homeApi.getTotalBalance().toResultData()
             .mapTo { it.totalBalance }
     }
 
     override suspend fun getBasicUserInfo(): ResultData<BasicInfoResponse> = withContextSafety(Dispatchers.IO) {
-        homeApi.getBasicInfo()
-            .toResultData()
-            .onSuccess { ResultData.success(this) }
-            .onFail { ResultData.fail(message) }
+        homeApi.getBasicInfo().toResultData()
     }
 
     override suspend fun getFullUserInfo(): ResultData<FullInfoResponse> = withContextSafety(Dispatchers.IO) {
-        homeApi.getFullInfo()
-            .toResultData()
-            .onSuccess { ResultData.success(this) }
-            .onFail { ResultData.fail(message) }
+        homeApi.getFullInfo().toResultData()
     }
 
     override suspend fun getLastTransfers(): ResultData<List<LastTransfersResponse>> = withContextSafety(Dispatchers.IO) {
-        homeApi.getLastTransfers()
-            .toResultData()
-            .onSuccess { ResultData.success(this) }
-            .onFail { ResultData.fail(message) }
+        homeApi.getLastTransfers().toResultData()
     }
 
     override suspend fun updateUserInfo(updateUserInfoRequest: UpdateInfoRequest): ResultData<Unit> = withContextSafety(Dispatchers.IO) {
-        homeApi.updateUserInfo(updateUserInfoRequest)
-            .toResultData()
-            .onSuccess { ResultData.success(Unit) }
-            .onFail { ResultData.fail(message) }
-            .mapTo {
-
-            }
+        homeApi.updateUserInfo(updateUserInfoRequest).toResultData()
+            .mapTo {  }
     }
 }

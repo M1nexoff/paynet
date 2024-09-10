@@ -29,9 +29,6 @@ class AuthRepositoryImpl @Inject constructor(
    override suspend fun signUp(signUpRequest: SignUpRequest): ResultData<Unit> = withContextSafety(Dispatchers.IO){
         authApi.signUp(signUpRequest)
             .toResultData()
-            .onSuccess { ResultData.success(Unit) }
-            .onFail { ResultData.fail(message) }
-
             .mapTo {
             localStorage.token = it.token
             localStorage.isSignIn = false
@@ -64,6 +61,7 @@ class AuthRepositoryImpl @Inject constructor(
                 localStorage.token = ""
                 localStorage.accessToken = it.accessToken
                 localStorage.refreshToken = it.refreshToken
+                localStorage.isSignIn = true
             }
 //        ResultData.success(Unit)
     }
@@ -78,6 +76,7 @@ class AuthRepositoryImpl @Inject constructor(
                 localStorage.token = ""
                 localStorage.accessToken = it.accessToken
                 localStorage.refreshToken = it.refreshToken
+                localStorage.isSignIn = true
             }
 
     }

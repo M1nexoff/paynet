@@ -98,6 +98,8 @@ dependencies {
     implementation(libs.orbit.core)
     implementation(libs.orbit.viewmodel)
     implementation(libs.orbit.compose)
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
 }
 kapt {
     correctErrorTypes = true

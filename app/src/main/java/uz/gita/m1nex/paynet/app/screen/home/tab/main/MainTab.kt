@@ -1,6 +1,7 @@
 package uz.gita.m1nex.paynet.app.screen.home.tab.main
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.m1nex.core.hiltScreenModel
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
@@ -73,7 +76,15 @@ object MainTab: Tab {
 
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val viewModel: MainContract.Model = hiltScreenModel()
+        viewModel.collectSideEffect {
+            when(it){
+                is MainContract.SideEffect.Toast -> {
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         MainScreenContent(viewModel.collectAsState(), viewModel::onEventDispatcher)
     }
 }
@@ -81,8 +92,16 @@ object MainTab: Tab {
 
 @Composable
 private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStateOf(MainContract.UiState.Default), onEventDispatcher: (MainContract.Intent) -> Unit = {}) {
+    val name = remember { mutableStateOf("") }
+    val money = remember { mutableStateOf(0) }
     when (uiState.value) {
-        MainContract.UiState.Default -> {}
+        MainContract.UiState.Default -> {
+
+        }
+        is MainContract.UiState.BasicInfo -> {
+            name.value = (uiState.value as MainContract.UiState.BasicInfo).userName
+            money.value = (uiState.value as MainContract.UiState.BasicInfo).balance
+        }
     }
     PaynetOfficialTheme {
         Column(
@@ -107,7 +126,7 @@ private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStat
 
                 Column {
                     Text(
-                        text = "+998 93 531 12 60 ",
+                        text = name.value,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -165,22 +184,19 @@ private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStat
                         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                             Text(
                                 text = "Mening pulim",
-                                fontFamily = main,
-                                fontStyle = FontStyle.Normal,
-                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.bodyLarge,
                                 color = Color.Gray
                             )
                             Row() {
                                 Text(
-                                    text = if (isBalanceVisible.value) "324924" else "•••••",
+                                    text = if (isBalanceVisible.value) money.value.toString() else "•••••",
                                     fontSize = 36.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.titleLarge,
                                     color = Color.Black
                                 )
                                 Text(
                                     text = "so'm",
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.titleLarge,
                                     color = Color.LightGray,
                                     modifier = Modifier
                                         .padding(start = 4.dp, bottom = 4.dp)
@@ -231,10 +247,9 @@ fun PaynetCardUI(pan: String = "0000", balance: String = "0") {
     ) {
         Text(
             text = "Paynet karta",
-            fontWeight = FontWeight.SemiBold,
-            fontStyle = FontStyle.Normal,
-            fontFamily = main,
-        )
+            style = MaterialTheme.typography.bodyLarge,
+
+            )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -263,10 +278,9 @@ fun PaynetCardUI(pan: String = "0000", balance: String = "0") {
                     Text(
                         text = "${stringResource(R.string.paynet_card)} • ${pan}",
                         color = Color.Gray,
-                        fontFamily = main,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal
-                    )
+                        style = MaterialTheme.typography.bodyLarge,
+
+                        )
                     Text(
                         text = "${
                             buildAnnotatedString {
@@ -275,10 +289,8 @@ fun PaynetCardUI(pan: String = "0000", balance: String = "0") {
                             }
                         } so'm",
                         color = Color.Gray,
-                        fontFamily = main,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                        style = MaterialTheme.typography.bodyLarge,
+                        )
                 }
             }
 
@@ -349,10 +361,8 @@ fun PaynetActionButton(id: Int, text: String, modifier: Modifier = Modifier) {
 
         Text(
             text = text,
-            fontFamily = main,
             color = Color.Black,
-            fontStyle = FontStyle.Normal,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
     }
