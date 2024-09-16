@@ -11,7 +11,7 @@ import uz.gita.m1nex.entity.data.model.respone.LastTransfersResponse
 
 interface HomeUseCase {
     fun getTotalBalance(): Flow<ResultData<Int>>
-    fun getBasicUserInfo(): Flow<ResultData<BalanceAndName>>
+    fun getBasicUserInfo(): Flow<ResultData<BasicInfoResponse>>
     fun getFullUserInfo(): Flow<ResultData<FullInfoResponse>>
     fun getLastTransfers(): Flow<ResultData<List<LastTransfersResponse>>>
     fun updateUserInfo(updateUserInfoRequest: UpdateInfoRequest): Flow<ResultData<Unit>>

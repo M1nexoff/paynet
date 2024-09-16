@@ -23,7 +23,7 @@ import uz.gita.m1nex.presenter.screenmodel.signup.SignUpContract
 import uz.gita.m1nex.usecase.signup.AuthUseCase
 import javax.inject.Inject
 
-class VerifyScreenModelImpl @Inject constructor (
+internal class VerifyScreenModelImpl @Inject constructor (
     private val direction: VerifyContract.Direction,
     private val authUseCase: AuthUseCase
 ) : VerifyContract.Model {

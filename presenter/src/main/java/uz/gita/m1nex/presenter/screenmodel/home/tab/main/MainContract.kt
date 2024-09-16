@@ -12,7 +12,7 @@ interface MainContract {
 
     sealed interface UiState {
         data object Default : UiState
-        data class BasicInfo(val userName: String,val balance: Int) : UiState
+        data class BasicInfo(val userName: String) : UiState
     }
 
     sealed interface SideEffect {

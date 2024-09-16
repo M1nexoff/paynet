@@ -7,7 +7,7 @@ import uz.gita.m1nex.core.flowWithCatch
 import uz.gita.m1nex.entity.repository.AppRepository
 import javax.inject.Inject
 
-class PasswordUseCaseImpl @Inject constructor(
+internal class PasswordUseCaseImpl @Inject constructor(
     private val appRepository: AppRepository
 ) : PasswordUseCase {
     init {

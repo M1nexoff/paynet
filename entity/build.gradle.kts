@@ -42,16 +42,19 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(project(":core"))
+    implementation(project(":common"))
 
 
     //HILT
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+
     //RETROFIT
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.gson)
+
 
     //CHUCKER
     debugImplementation(libs.library)

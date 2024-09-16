@@ -13,7 +13,7 @@ sealed class ResultData<out T> {
 }
 
 sealed class MessageData {
-    class Text(val message: String) : MessageData()
+    data class Text(val message: String) : MessageData()
     class Resource(val resId: Int) : MessageData()
 }
 

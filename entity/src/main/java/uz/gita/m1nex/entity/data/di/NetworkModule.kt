@@ -20,15 +20,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+internal object NetworkModule {
 
     @Provides
     @Named("Auth")
     @Singleton
     fun provideAuthOkHttpClient(@ApplicationContext context: Context): OkHttpClient =
         OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
             .addInterceptor(ChuckerInterceptor(context))
             .build()
 
@@ -37,10 +37,10 @@ object NetworkModule {
     @Singleton
     fun provideHomeOkHttpClient(@ApplicationContext context: Context,localStorage: LocalStorage,api: AuthApi): OkHttpClient =
         OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
             .addInterceptor(ChuckerInterceptor(context))
-            .addInterceptor(AuthenticationInterceptor(localStorage,api))
+            .authenticator(AuthenticationInterceptor(localStorage,api))
             .build()
 
 
@@ -50,7 +50,7 @@ object NetworkModule {
     fun provideAuthRetrofit(@Named("Auth") okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("http://195.158.16.140/mobile-bank/v1/")
+            .baseUrl("http://195.158.16.140/mobile-bank/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -61,7 +61,7 @@ object NetworkModule {
     fun provideHomeRetrofit(@Named("Home") okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("http://195.158.16.140/mobile-bank/v1/")
+            .baseUrl("http://195.158.16.140/mobile-bank/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

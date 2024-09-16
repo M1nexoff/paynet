@@ -55,7 +55,6 @@ import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
 import uz.gita.m1nex.paynet.app.ui.theme.main
 import uz.gita.m1nex.presenter.screenmodel.home.HomeContract
-import uz.gita.m1nex.presenter.screenmodel.home.HomeScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.home.tab.main.MainContract
 
 object MainTab: Tab {
@@ -100,7 +99,7 @@ private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStat
         }
         is MainContract.UiState.BasicInfo -> {
             name.value = (uiState.value as MainContract.UiState.BasicInfo).userName
-            money.value = (uiState.value as MainContract.UiState.BasicInfo).balance
+//            money.value = (uiState.value as MainContract.UiState.BasicInfo).balance
         }
     }
     PaynetOfficialTheme {

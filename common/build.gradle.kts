@@ -63,5 +63,7 @@ dependencies {
     implementation(libs.voyager.bottom.sheet.navigator)
     implementation(libs.voyager.tab.navigator)
 
+    implementation(libs.gson)
+
 }
 //

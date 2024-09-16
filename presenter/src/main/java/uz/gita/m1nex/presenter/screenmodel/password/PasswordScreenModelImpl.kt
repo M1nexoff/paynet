@@ -13,7 +13,7 @@ import uz.gita.m1nex.presenter.screenmodel.signup.SignUpContract
 import uz.gita.m1nex.usecase.password.PasswordUseCase
 import javax.inject.Inject
 
-class PasswordScreenModelImpl @Inject constructor(
+internal class PasswordScreenModelImpl @Inject constructor(
     private val direction: PasswordContract.Direction,
     private val passwordUseCase: PasswordUseCase
 ) : PasswordContract.Model {

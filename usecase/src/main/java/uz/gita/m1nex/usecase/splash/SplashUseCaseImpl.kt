@@ -10,7 +10,7 @@ import uz.gita.m1nex.entity.repository.AppRepository
 import uz.gita.m1nex.usecase.splash.SplashUseCase
 import javax.inject.Inject
 
-class SplashUseCaseImpl @Inject constructor(
+internal class SplashUseCaseImpl @Inject constructor(
     private val appRepository: AppRepository
 ) : SplashUseCase {
 

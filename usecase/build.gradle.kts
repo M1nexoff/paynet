@@ -44,7 +44,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(project(":entity"))
-    implementation(project(":core"))
+    implementation(project(":common"))
 
     //HILT
     implementation(libs.hilt.android)

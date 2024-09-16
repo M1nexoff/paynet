@@ -64,11 +64,11 @@ fun PaynetOfficialTheme(
     )
 }
 
-fun setLanguage(language: Locale, context: Context){
-    val config = context.resources.configuration
-    java.util.Locale.setDefault(language)
-    config.setLocale(language)
-    context.createConfigurationContext(config)
-    context.resources.updateConfiguration(config, context.resources.displayMetrics)
-}
+    fun setLanguage(language: Locale, context: Context){
+        val config = context.resources.configuration
+        java.util.Locale.setDefault(language)
+        config.setLocale(language)
+        context.createConfigurationContext(config)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+    }
 

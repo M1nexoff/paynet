@@ -12,21 +12,21 @@ import uz.gita.m1nex.entity.data.model.respone.LastTransfersResponse
 import uz.gita.m1nex.entity.data.model.respone.TotalBalanceResponse
 import uz.gita.m1nex.entity.data.model.respone.UpdateInfoResponse
 
-interface HomeApi {
-    @GET("home/total-balance")
+internal interface HomeApi {
+    @GET("v1/home/total-balance")
     suspend fun getTotalBalance(): Response<TotalBalanceResponse>
 
-    @GET("home/user-info")
+    @GET("v1/home/user-info")
     suspend fun getBasicInfo(): Response<BasicInfoResponse>
 
-    @GET("home/user-info/details")
+    @GET("v1/home/user-info/details")
     suspend fun getFullInfo(): Response<FullInfoResponse>
 
-    @PUT("home/user-info")
+    @PUT("v1/home/user-info")
     suspend fun updateUserInfo(
         @Body updateInfoRequest: UpdateInfoRequest
     ): Response<UpdateInfoResponse>
 
-    @GET("home/last-transfers")
+    @GET("v1/home/last-transfers")
     suspend fun getLastTransfers(): Response<List<LastTransfersResponse>>
 }

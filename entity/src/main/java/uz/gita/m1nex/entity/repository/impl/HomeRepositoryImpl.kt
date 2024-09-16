@@ -18,30 +18,35 @@ import uz.gita.m1nex.entity.data.util.toResultData
 import uz.gita.m1nex.entity.repository.HomeRepository
 import javax.inject.Inject
 
-class HomeRepositoryImpl @Inject constructor(
+internal class HomeRepositoryImpl @Inject constructor(
     private val localStorage: LocalStorage,
     private val homeApi: HomeApi
 ) : HomeRepository {
 
     override suspend fun getTotalBalance(): ResultData<Int> = withContextSafety(Dispatchers.IO) {
-        homeApi.getTotalBalance().toResultData()
+        homeApi.getTotalBalance()
+            .toResultData()
             .mapTo { it.totalBalance }
     }
 
     override suspend fun getBasicUserInfo(): ResultData<BasicInfoResponse> = withContextSafety(Dispatchers.IO) {
-        homeApi.getBasicInfo().toResultData()
+        homeApi.getBasicInfo()
+            .toResultData()
     }
 
     override suspend fun getFullUserInfo(): ResultData<FullInfoResponse> = withContextSafety(Dispatchers.IO) {
-        homeApi.getFullInfo().toResultData()
+        homeApi.getFullInfo()
+            .toResultData()
     }
 
     override suspend fun getLastTransfers(): ResultData<List<LastTransfersResponse>> = withContextSafety(Dispatchers.IO) {
-        homeApi.getLastTransfers().toResultData()
+        homeApi.getLastTransfers()
+            .toResultData()
     }
 
     override suspend fun updateUserInfo(updateUserInfoRequest: UpdateInfoRequest): ResultData<Unit> = withContextSafety(Dispatchers.IO) {
-        homeApi.updateUserInfo(updateUserInfoRequest).toResultData()
+        homeApi.updateUserInfo(updateUserInfoRequest)
+            .toResultData()
             .mapTo {  }
     }
 }

@@ -51,7 +51,6 @@ import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
 import uz.gita.m1nex.paynet.app.ui.theme.main
 import uz.gita.m1nex.presenter.screenmodel.password.PasswordContract
 import uz.gita.m1nex.presenter.screenmodel.password.PasswordState
-import uz.gita.m1nex.presenter.screenmodel.password.PasswordScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.signup.SignUpContract
 import java.lang.Error
 

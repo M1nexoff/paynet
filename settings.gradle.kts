@@ -23,6 +23,6 @@ dependencyResolutionManagement {
 rootProject.name = "PaynetOfficial"
 include(":app")
 include(":presenter")
-include(":core")
+include(":common")
 include(":usecase")
 include(":entity")

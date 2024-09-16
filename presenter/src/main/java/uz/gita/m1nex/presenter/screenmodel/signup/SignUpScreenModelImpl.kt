@@ -12,7 +12,7 @@ import uz.gita.m1nex.entity.data.model.request.SignUpRequest
 import uz.gita.m1nex.usecase.signup.AuthUseCase
 import javax.inject.Inject
 
-class SignUpScreenModelImpl @Inject constructor(
+internal class SignUpScreenModelImpl @Inject constructor(
     private val direction: SignUpContract.Direction,
     private val signUpUseCase: AuthUseCase
 ) : SignUpContract.Model {

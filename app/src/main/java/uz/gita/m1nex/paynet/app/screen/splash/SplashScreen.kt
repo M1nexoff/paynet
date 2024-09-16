@@ -16,13 +16,13 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import uz.gita.m1nex.core.hiltScreenModel
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.presenter.screenmodel.splash.SplashContract
-import uz.gita.m1nex.presenter.screenmodel.splash.SplashScreenModelImpl
 class SplashScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel: SplashScreenModelImpl = getScreenModel()
+        val viewModel: SplashContract.Model = hiltScreenModel()
         SplashScreenContent()
     }
 }

@@ -62,7 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(project(":presenter"))
-    implementation(project(":core"))
+    implementation(project(":common"))
     implementation(project(":entity"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

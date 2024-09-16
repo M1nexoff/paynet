@@ -5,47 +5,47 @@ import okhttp3.Request
 import android.content.SharedPreferences
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
+import okhttp3.Route
 import uz.gita.m1nex.core.onSuccess
 import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.data.model.request.UpdateTokenRequest
 import uz.gita.m1nex.entity.data.util.toResultData
 
-class AuthenticationInterceptor(
+internal class AuthenticationInterceptor(
     private val localStorage: LocalStorage,
     private val authApi: AuthApi
-) : Interceptor {
+) : Authenticator {
+    companion object {
+        const val HEADER_AUTHORIZATION = "Authorization"
+        const val TOKEN_TYPE = "Bearer"
+    }
 
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
-
-        val accessToken = localStorage.accessToken
-        val refreshToken = localStorage.refreshToken
-
-        val requestBuilder = originalRequest.newBuilder()
-        accessToken.let { requestBuilder.addHeader("Authorization", "Bearer $it") }
-
-        val newRequest = requestBuilder.build()
-        val response = chain.proceed(newRequest)
-
-        if (response.code == 401) {
-            try {
-                runBlocking {
-                    val updateTokenResponse = async { authApi.updateToken(UpdateTokenRequest(refreshToken)).toResultData()}
-                    updateTokenResponse.await().onSuccess {
-                        localStorage.accessToken = accessToken
-                        localStorage.refreshToken = refreshToken
+    override fun authenticate(route: Route?, response: Response): Request? {
+        val currentToken = runBlocking { localStorage.accessToken }
+        synchronized(this) {
+            val updatedToken = runBlocking { localStorage.accessToken }
+            val token = if (currentToken != updatedToken) updatedToken else {
+                val newSessionResponse = runBlocking { authApi.updateToken(UpdateTokenRequest(localStorage.refreshToken)) }
+                if (newSessionResponse.isSuccessful && newSessionResponse.body() != null) {
+                    newSessionResponse.body()?.let { body ->
+                        runBlocking {
+                            localStorage.accessToken = body.accessToken
+                            localStorage.refreshToken = body.refreshToken
+                        }
+                        body.accessToken
                     }
-                }
-                val newRequestBuilder = originalRequest.newBuilder()
-                    .addHeader("Authorization", "Bearer")
-                    .build()
-                return chain.proceed(newRequestBuilder)
-            } catch (e: Exception) {
-                throw e
+                } else null
             }
-
+            if (token == null) {
+                runBlocking {
+//                    appRepository.clearUserData()
+//                    direction.logout()
+                }
+            }
+            return if (token != null) response.request.newBuilder()
+                .header(HEADER_AUTHORIZATION, "$TOKEN_TYPE $token")
+                .build() else null
         }
-
-        return response
     }
 }

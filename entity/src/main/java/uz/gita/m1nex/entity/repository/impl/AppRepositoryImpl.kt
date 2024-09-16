@@ -10,7 +10,7 @@ import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.repository.AppRepository
 import javax.inject.Inject
 
-class AppRepositoryImpl @Inject constructor(
+internal class AppRepositoryImpl @Inject constructor(
     private val localStorage: LocalStorage
 ): AppRepository {
     override suspend fun getLaunchMode(): LaunchData = withContextSafety(Dispatchers.IO) {

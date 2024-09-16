@@ -12,7 +12,7 @@ import uz.gita.m1nex.usecase.splash.SplashUseCase
 import javax.inject.Inject
 
 
-class SplashScreenModelImpl @Inject constructor(
+internal class SplashScreenModelImpl @Inject constructor(
     private val direction: SplashContract.Direction,
     private val splashUseCase: SplashUseCase
 ) : SplashContract.Model{

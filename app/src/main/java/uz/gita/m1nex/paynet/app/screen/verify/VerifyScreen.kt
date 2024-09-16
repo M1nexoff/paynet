@@ -60,7 +60,6 @@ import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
 import uz.gita.m1nex.paynet.app.ui.theme.main
 import uz.gita.m1nex.presenter.screenmodel.verify.VerifyContract
-import uz.gita.m1nex.presenter.screenmodel.verify.VerifyScreenModelImpl
 
 class VerifyScreen(private val phone: String, private val isSignIn: Boolean) : Screen {
     @Composable

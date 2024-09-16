@@ -3,12 +3,14 @@ package uz.gita.m1nex.core.helper
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.google.gson.Gson
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 
 abstract class SharedPreference(context: Context, preferences: SharedPreferences? = null) {
     private val pref = preferences ?: context.getSharedPreferences(javaClass.canonicalName, Context.MODE_PRIVATE)
+    private val gson = Gson()
 
     inner class booleans(private val init: Boolean = false) :
         ReadWriteProperty<Any, Boolean> {
@@ -37,6 +39,19 @@ abstract class SharedPreference(context: Context, preferences: SharedPreferences
         override fun getValue(thisRef: Any, property: KProperty<*>): String? = pref.getString(property.name, defValue)
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) = value?.run { pref.edit { putString(property.name, value).apply() } } ?: Unit
+    }
+
+    inner class objects<T>(private val clazz: Class<T>, private val defValue: T) : ReadWriteProperty<Any, T> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): T {
+            val json = pref.getString(property.name, null)
+            return if (json != null) gson.fromJson(json, clazz) else defValue
+        }
+
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+            pref.edit {
+                putString(property.name, gson.toJson(value)).apply()
+            }
+        }
     }
 
 }
