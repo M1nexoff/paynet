@@ -69,9 +69,9 @@ import com.ozcanalasalvar.datepicker.utils.withYear
 import com.ozcanalasalvar.wheelview.SelectorOptions
 import com.ozcanalasalvar.wheelview.WheelView
 import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.m1nex.core.data.model.sign.SignUp
 import uz.gita.m1nex.core.getText
 import uz.gita.m1nex.core.hiltScreenModel
-import uz.gita.m1nex.entity.data.model.request.SignUpRequest
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.component.AppButton
 import uz.gita.m1nex.paynet.app.ui.theme.component.MaskVisualTransformation
@@ -98,7 +98,6 @@ private fun SignUpScreenContent(
     state: State<SignUpContract.UiState>,
     eventDispatcher: (SignUpContract.Intent) -> Unit
 ) {
-
     val phone = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
     val firstName = rememberSaveable { mutableStateOf("") }
@@ -412,12 +411,12 @@ private fun SignUpScreenContent(
                         .align(Alignment.BottomCenter)
                 ) {
                     AppButton(
-                        text = stringResource(id = R.string.continue_text),
+                        text = stringResource(id = R.string.continue_txt),
                         onClick = {
-                            if (password.value.length >= 8 && phone.value.length == 9 && firstName.value.length >= 3 && lastName.value.length >= 3) {
+                            if (password.value.length >= 6 && phone.value.length == 9 && firstName.value.length >= 3 && lastName.value.length >= 3) {
                                 eventDispatcher.invoke(
                                     SignUpContract.Intent.SignUp(
-                                        SignUpRequest(
+                                        SignUp(
                                             "+998" + phone.value,
                                             password.value,
                                             firstName.value,
@@ -596,7 +595,16 @@ fun WheelDatePicker(
 fun SignUpScreenContentPreview() {
     val state = remember {
         mutableStateOf<SignUpContract.UiState>(
-            SignUpContract.UiState.Default(SignUpRequest("", "", "", "", "", ""))
+            SignUpContract.UiState.Default(
+                SignUp(
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                )
+            )
         )
     }
     SignUpScreenContent(

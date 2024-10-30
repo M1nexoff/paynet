@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import cafe.adriel.voyager.core.screen.Screen
 import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.m1nex.core.data.model.sign.SignIn
 import uz.gita.m1nex.core.getText
 import uz.gita.m1nex.core.hiltScreenModel
-import uz.gita.m1nex.entity.data.model.request.SignInRequest
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.component.MaskVisualTransformation
 import uz.gita.m1nex.paynet.app.ui.theme.setLanguage
@@ -69,7 +69,7 @@ fun prew() {
     SignInScreenContent(state = remember {
         mutableStateOf(
             SignInContract.UiState.Default(
-                SignInRequest("", "")
+                SignIn("", "")
             )
         )
     }, eventDispatcher = {})
@@ -240,7 +240,7 @@ private fun SignUp(
                 )
 
                 var enabled = false
-                if (password.value.length >= 8 && phone.value.length == 9) {
+                if (password.value.length >= 6 && phone.value.length == 9) {
                     enabled = true
                 }
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -253,10 +253,10 @@ private fun SignUp(
                     }
                     Button(
                         onClick = {
-                            if (password.value.length >= 8 && phone.value.length == 9) {
+                            if (password.value.length >= 6 && phone.value.length == 9) {
                                 eventDispatcher.invoke(
                                     SignInContract.Intent.SignIn(
-                                        SignInRequest(
+                                        SignIn(
                                             "+998" + phone.value,
                                             password.value
                                         )
@@ -277,7 +277,7 @@ private fun SignUp(
                     ) {
                         update.value
                         Text(
-                            text = stringResource(id = R.string.continue_text),
+                            text = stringResource(id = R.string.continue_txt),
                             color = Color.White
                         )
                     }

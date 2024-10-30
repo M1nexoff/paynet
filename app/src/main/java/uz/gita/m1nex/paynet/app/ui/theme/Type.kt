@@ -21,9 +21,38 @@ val carosSoft = FontFamily(Font(R.font.caros_soft_extra_bold, FontWeight.Bold))
 
 // Customize the typography
 val Typography = Typography(
+    bodyMedium = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = main,
         fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.5.sp
+    ),
+    displayLarge = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.5.sp
+    ),
+
+    labelMedium = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
@@ -31,7 +60,7 @@ val Typography = Typography(
     labelLarge = TextStyle(
         fontFamily = main,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
+        fontSize = 18 .sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
@@ -42,12 +71,23 @@ val Typography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
+    titleMedium = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.sp
+    ),
     labelSmall = TextStyle(
         fontFamily = main,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
-
         letterSpacing = 0.5.sp
-
-    )
+    ),
+    displaySmall = TextStyle(
+        fontFamily = main,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp,
+        letterSpacing = 0.5.sp
+    ),
 )

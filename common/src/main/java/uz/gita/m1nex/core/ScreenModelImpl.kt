@@ -1,5 +1,6 @@
 package uz.gita.m1nex.core
 
+import androidx.annotation.Keep
 import cafe.adriel.voyager.core.model.ScreenModel
 import kotlin.reflect.KClass
 

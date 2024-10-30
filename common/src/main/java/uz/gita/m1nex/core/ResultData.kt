@@ -1,22 +1,26 @@
 package uz.gita.m1nex.core
 
+import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 
+@Keep
 sealed class ResultData<out T> {
     class Success<T>(val data: T) : ResultData<T>()
     class Fail(val message: MessageData) : ResultData<Nothing>()
 
     companion object
 }
+@Keep
 
 sealed class MessageData {
     data class Text(val message: String) : MessageData()
     class Resource(val resId: Int) : MessageData()
 }
 
+@Keep
 @Composable
 fun MessageData.getText() = when (this) {
     is MessageData.Text -> message
@@ -39,6 +43,10 @@ val <T> ResultData<T>.asText get():MessageData.Text = (this.asFail.message as Me
 val <T> ResultData<T>.asResource get():MessageData.Resource = (this.asFail.message as MessageData.Resource)
 
 inline fun <T> ResultData<T>.onSuccess(block: T.() -> Unit): ResultData<T> {
+    if (this.isSuccess) block(this.asSuccess.data)
+    return this
+}
+inline fun <T> ResultData<T>.success(block: (T) -> Unit): ResultData<T> {
     if (this.isSuccess) block(this.asSuccess.data)
     return this
 }

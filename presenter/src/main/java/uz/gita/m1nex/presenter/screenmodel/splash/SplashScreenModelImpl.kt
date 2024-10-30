@@ -6,6 +6,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.orbitmvi.orbit.Container
 import uz.gita.m1nex.core.data.LaunchData
 import uz.gita.m1nex.core.onSuccess
 import uz.gita.m1nex.usecase.splash.SplashUseCase
@@ -31,4 +32,6 @@ internal class SplashScreenModelImpl @Inject constructor(
             }
             .launchIn(screenModelScope)
     }
+
+    override val container: Container<SplashContract.UIState, SplashContract.SideEffect> = container(SplashContract.UIState.Default)
 }

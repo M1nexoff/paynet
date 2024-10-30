@@ -2,6 +2,7 @@ package uz.gita.m1nex.entity.data.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,8 +13,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.data.remote.AuthApi
-import uz.gita.m1nex.entity.data.remote.AuthenticationInterceptor
+import uz.gita.m1nex.entity.data.remote.CardApi
+import uz.gita.m1nex.entity.data.util.AuthenticationInterceptor
 import uz.gita.m1nex.entity.data.remote.HomeApi
+import uz.gita.m1nex.entity.data.remote.TransferApi
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -77,4 +80,18 @@ internal object NetworkModule {
     fun provideHomeApi(@Named("Home") retrofit: Retrofit): HomeApi {
         return retrofit.create(HomeApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideTransferApi(@Named("Home") retrofit: Retrofit): TransferApi {
+        return retrofit.create(TransferApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideCardApi(@Named("Home") retrofit: Retrofit): CardApi {
+        return retrofit.create(CardApi::class.java)
+    }
+
+    @Provides
+    fun provideGson(): Gson = Gson()
+
 }

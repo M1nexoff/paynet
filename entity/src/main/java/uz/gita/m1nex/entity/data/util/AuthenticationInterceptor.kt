@@ -1,16 +1,12 @@
-package uz.gita.m1nex.entity.data.remote
-import okhttp3.Interceptor
+package uz.gita.m1nex.entity.data.util
 import okhttp3.Response
 import okhttp3.Request
-import android.content.SharedPreferences
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Route
-import uz.gita.m1nex.core.onSuccess
 import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.data.model.request.UpdateTokenRequest
-import uz.gita.m1nex.entity.data.util.toResultData
+import uz.gita.m1nex.entity.data.remote.AuthApi
 
 internal class AuthenticationInterceptor(
     private val localStorage: LocalStorage,

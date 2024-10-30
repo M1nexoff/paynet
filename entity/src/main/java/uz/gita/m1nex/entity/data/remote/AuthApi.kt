@@ -3,7 +3,12 @@ package uz.gita.m1nex.entity.data.remote
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
-import uz.gita.m1nex.entity.data.model.request.*
+import uz.gita.m1nex.entity.data.model.request.SignInRequest
+import uz.gita.m1nex.entity.data.model.request.SignUpRequest
+import uz.gita.m1nex.entity.data.model.request.SignInVerifyRequest
+import uz.gita.m1nex.entity.data.model.request.SignUpVerifyRequest
+import uz.gita.m1nex.entity.data.model.request.TokenRequest
+import uz.gita.m1nex.entity.data.model.request.UpdateTokenRequest
 import uz.gita.m1nex.entity.data.model.respone.*
 
 internal interface AuthApi {

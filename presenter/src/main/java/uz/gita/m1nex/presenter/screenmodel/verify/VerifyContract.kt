@@ -3,7 +3,6 @@ package uz.gita.m1nex.presenter.screenmodel.verify
 import cafe.adriel.voyager.core.model.ScreenModel
 import uz.gita.m1nex.core.MessageData
 import uz.gita.m1nex.core.ScreenModelImpl
-import uz.gita.m1nex.entity.data.model.request.SignUpRequest
 import uz.gita.m1nex.presenter.AppViewModel
 import uz.gita.m1nex.presenter.screenmodel.signup.SignUpScreenModelImpl
 import java.sql.Time

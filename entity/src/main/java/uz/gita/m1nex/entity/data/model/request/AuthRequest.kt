@@ -11,5 +11,5 @@ data class SignUpRequest(
 data class SignUpVerifyRequest(val token: String, val code: String)
 data class SignInRequest(val phone: String, val password: String)
 data class SignInVerifyRequest(val token: String, val code: String)
-data class UpdateTokenRequest(val `refresh-token`: String)
+data class  UpdateTokenRequest(val `refresh-token`: String)
 data class TokenRequest(val token: String)

@@ -1,7 +1,11 @@
 package uz.gita.m1nex.paynet.app.screen.home.tab.main
 
 import android.annotation.SuppressLint
-import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,21 +21,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -41,20 +57,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import uz.gita.m1nex.core.data.model.card.CardData
 import uz.gita.m1nex.core.hiltScreenModel
+import uz.gita.m1nex.core.previewStateOf
+import uz.gita.m1nex.core.toFormat
 import uz.gita.m1nex.paynet.R
+import uz.gita.m1nex.paynet.app.ui.dialog.CardsSheetDialog
+import uz.gita.m1nex.paynet.app.ui.theme.BackgroundLight
 import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
-import uz.gita.m1nex.paynet.app.ui.theme.main
-import uz.gita.m1nex.presenter.screenmodel.home.HomeContract
+import uz.gita.m1nex.paynet.app.ui.theme.circleStartColorGreen
+import uz.gita.m1nex.paynet.app.ui.theme.component.Card
+import uz.gita.m1nex.paynet.app.ui.theme.component.CashBack
+import uz.gita.m1nex.paynet.app.ui.theme.component.MyCardsEmpty
+import uz.gita.m1nex.paynet.app.ui.theme.component.MyCardsMoreCards
+import uz.gita.m1nex.paynet.app.ui.theme.component.MyCardsOneCard
+import uz.gita.m1nex.paynet.app.ui.theme.component.MyCardsTwoCards
+import uz.gita.m1nex.paynet.app.ui.theme.securityCardEndColor
+import uz.gita.m1nex.paynet.app.ui.theme.securityCardStartColor
+import uz.gita.m1nex.paynet.app.ui.theme.textColor
+import uz.gita.m1nex.paynet.app.ui.theme.white
 import uz.gita.m1nex.presenter.screenmodel.home.tab.main.MainContract
 
 object MainTab: Tab {
@@ -72,16 +109,42 @@ object MainTab: Tab {
                 )
             }
         }
-
+    
     @Composable
     override fun Content() {
+        val bottomSheetNavigator = LocalNavigator.currentOrThrow
+        val lifecycleOwner = LocalLifecycleOwner.current
         val context = LocalContext.current
         val viewModel: MainContract.Model = hiltScreenModel()
-        viewModel.collectSideEffect {
-            when(it){
-                is MainContract.SideEffect.Toast -> {
-                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver{ _, event ->
+                when(event){
+                    Lifecycle.Event.ON_RESUME -> {
+                        viewModel.onEventDispatcher(MainContract.Intent.GetBasicInfo)
+                    }
+                    else -> {
+
+                    }
                 }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+
+        val bottomNavigator = LocalNavigator.current
+        viewModel.collectSideEffect {
+            when (it) {
+                MainContract.SideEffect.AddCardDialog -> {
+//                    bottomNavigator?.push(
+//                        AddCardDialog{
+//                            viewModel.onEventDispatcher(MainContract.Intent.OpenAddScreen)
+//                        }
+//                    )
+                }
+
+
             }
         }
         MainScreenContent(viewModel.collectAsState(), viewModel::onEventDispatcher)
@@ -90,18 +153,18 @@ object MainTab: Tab {
 
 
 @Composable
-private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStateOf(MainContract.UiState.Default), onEventDispatcher: (MainContract.Intent) -> Unit = {}) {
+private fun MainScreenContent2(uiState: State<MainContract.UiState> = mutableStateOf(MainContract.UiState.Default), onEventDispatcher: (MainContract.Intent) -> Unit = {}) {
     val name = remember { mutableStateOf("") }
-    val money = remember { mutableStateOf(0) }
-    when (uiState.value) {
-        MainContract.UiState.Default -> {
-
-        }
-        is MainContract.UiState.BasicInfo -> {
-            name.value = (uiState.value as MainContract.UiState.BasicInfo).userName
-//            money.value = (uiState.value as MainContract.UiState.BasicInfo).balance
-        }
-    }
+    val money by remember { mutableStateOf(0) }
+//    when (uiState.value) {
+//        MainContract.UiState.Default -> {
+//
+//        }
+//        is MainContract.UiState.BasicInfo -> {
+//            name.value = (uiState.value as MainContract.UiState.BasicInfo).userName
+////            money.value = (uiState.value as MainContract.UiState.BasicInfo).balance
+//        }
+//    }
     PaynetOfficialTheme {
         Column(
             Modifier
@@ -188,7 +251,7 @@ private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStat
                             )
                             Row() {
                                 Text(
-                                    text = if (isBalanceVisible.value) money.value.toString() else "•••••",
+                                    text = if (isBalanceVisible.value) money.toString().toFormat(3) else "•••••",
                                     fontSize = 36.sp,
                                     style = MaterialTheme.typography.titleLarge,
                                     color = Color.Black
@@ -207,7 +270,7 @@ private fun MainScreenContent(uiState: State<MainContract.UiState> = mutableStat
                                         .height(40.dp)
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = if (isBalanceVisible.value) R.drawable.ic_show_password else R.drawable.ic_hide_password),
+                                        painter = painterResource(id = if (isBalanceVisible.value) R.drawable.ic_action_eye_open else R.drawable.ic_action_eye_close),
                                         contentDescription = "Toggle Visibility",
                                         modifier = Modifier
                                             .align(Alignment.BottomEnd)
@@ -247,7 +310,6 @@ fun PaynetCardUI(pan: String = "0000", balance: String = "0") {
         Text(
             text = "Paynet karta",
             style = MaterialTheme.typography.bodyLarge,
-
             )
         Row(
             modifier = Modifier
@@ -256,7 +318,6 @@ fun PaynetCardUI(pan: String = "0000", balance: String = "0") {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -374,8 +435,589 @@ fun PreviewMainScreen() {
     PaynetOfficialTheme {
         Scaffold {
             Column {
-                MainScreenContent()
+                MainScreenContent(
+                    previewStateOf(MainContract.UiState.Default),
+                    {}
+                )
             }
         }
     }
+}
+
+
+@Composable
+fun MainScreenContent(
+    uiState: State<MainContract.UiState>,
+    onEventDispatcher: (MainContract.Intent) -> Unit,
+) {
+    val context = LocalContext.current
+    var moneyVisibleRemember by remember {
+        mutableStateOf(false)
+    }
+    var cards by remember {
+        mutableStateOf(listOf<CardData>())
+    }
+    val name = rememberSaveable { mutableStateOf("") }
+    val money = rememberSaveable { mutableStateOf(0) }
+    var cardRemember by remember {
+        mutableIntStateOf(1)
+    }
+    var isRefreshing by remember { mutableStateOf(false) }
+    when(uiState.value){
+        is MainContract.UiState.BasicState -> {
+            isRefreshing = false
+            name.value = (uiState.value as MainContract.UiState.BasicState).phone
+            money.value = (uiState.value as MainContract.UiState.BasicState).balance
+        }
+
+        MainContract.UiState.Default -> {
+
+        }
+
+        is MainContract.UiState.CardsState -> {
+            cards = (uiState.value as MainContract.UiState.CardsState).list
+        }
+    }
+    var items by remember { mutableStateOf(listOf("Item 1", "Item 2", "Item 3")) }
+//    val bottomTabNavigator = LocalTabNavigator.current
+    // SwipeRefresh layout
+    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = {
+        // Simulate a network request
+        isRefreshing = true
+        onEventDispatcher.invoke(MainContract.Intent.GetBasicInfo)
+//            LaunchedEffect(Unit) {
+//                delay(2000) // Simulate network delay
+//                items = items.shuffled() // Update the list
+//                isRefreshing = false
+//            }
+    }) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (isRefreshing) {
+                onEventDispatcher.invoke(MainContract.Intent.GetBasicInfo)
+            }
+
+            var amount by remember {
+                mutableStateOf("")
+            }
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(BackgroundLight)
+            ) {
+                Box(modifier = Modifier
+                    .padding(start = 16.dp)
+                    .size(28.dp)
+                    .clickable {
+                        onEventDispatcher.invoke(MainContract.Intent.OpenProfile)
+                    }
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(circleStartColorGreen)
+                    .align(Alignment.CenterVertically)
+
+
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = name.value,
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable { onEventDispatcher.invoke(MainContract.Intent.OpenProfile) },
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_chevron_down_x24),
+                    contentDescription = "",
+                    Modifier
+                        .size(20.dp)
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            onEventDispatcher.invoke(MainContract.Intent.OpenProfile)
+                        }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 16.dp)
+                ) {
+                    Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                        Image(
+                            modifier = Modifier.clickable {
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse("https://chat.paynet.uz/"))
+                                startActivity(context, intent, Bundle())
+
+                            },
+                            painter = painterResource(id = R.drawable.ic_operation_support),
+                            contentDescription = ""
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Image(
+                            modifier = Modifier.clickable {
+                                onEventDispatcher.invoke(MainContract.Intent.OpenNotifications)
+                            },
+                            painter = painterResource(id = R.drawable.ic_operations_bell_new),
+                            contentDescription = ""
+                        )
+                    }
+                }
+
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(BackgroundLight)
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.my_money),
+                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = textColor
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
+                        Text(
+                            text = if (moneyVisibleRemember) money.value.toString() else "•••••",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(id = R.string.som),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = textColor
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Image(painter = painterResource(id = if (moneyVisibleRemember) R.drawable.ic_action_eye_open else R.drawable.ic_action_eye_close),
+                                contentDescription = "eye",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(end = 16.dp)
+                                    .clickable {
+                                        moneyVisibleRemember = !moneyVisibleRemember
+                                    })
+                        }
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .shadow(elevation = 2.dp, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(white)
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            modifier = Modifier.padding(start = 12.dp, top = 12.dp),
+                            text = stringResource(id = R.string.paynet_card),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Black
+                        )
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Text(modifier = Modifier
+                                .padding(end = 12.dp, top = 12.dp)
+                                .align(Alignment.CenterEnd)
+                                .clickable {
+                                    onEventDispatcher.invoke(
+                                        MainContract.Intent.OpenWhatIsThisScreen
+                                    )
+                                },
+                                text = stringResource(id = R.string.what_is_it),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = circleStartColorGreen)
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 9.dp, top = 4.dp)
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .width(72.dp)
+                                .height(56.dp),
+                            painter = painterResource(id = R.drawable.paynet),
+                            contentDescription = ""
+                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 4.dp)
+                        ) {
+
+                            Text(
+                                text = stringResource(id = R.string.paynet_card),
+                                fontSize = 16.sp,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = textColor
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = if (moneyVisibleRemember) money.value.toString().toFormat(3) else "•••••",
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(id = R.string.som),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = textColor
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 6.dp, end = 6.dp, bottom = 8.dp, top = 4.dp)
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .height(80.dp)
+                                .padding(4.dp)
+                                .weight(1f)
+                                .shadow(elevation = 3.dp, RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(white)
+                                .clickable {
+
+                                },
+                            icon = R.drawable.ic_action_plus,
+                            text = R.string.fill
+                        )
+                        Card(
+                            modifier = Modifier
+                                .height(80.dp)
+                                .padding(4.dp)
+                                .weight(1f)
+                                .shadow(elevation = 3.dp, RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(white)
+                                .clickable {
+//                                    bottomTabNavigator.current = TransferTab
+                                }, icon = R.drawable.ic_action_transfers, text = R.string.transfer
+                        )
+                        Card(
+                            modifier = Modifier
+                                .height(80.dp)
+                                .padding(4.dp)
+                                .weight(1f)
+                                .shadow(elevation = 3.dp, RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(white)
+                                .clickable {
+
+                                },
+                            icon = R.drawable.ic_operations_wallet,
+                            text = R.string.pay
+                        )
+                    }
+                }
+
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .shadow(elevation = 2.dp, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(white)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 9.dp, top = 4.dp)
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .width(72.dp)
+                                .height(82.dp),
+                            painter = painterResource(id = R.drawable.paynetjon_promotion),
+                            contentDescription = ""
+                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 4.dp, top = 4.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.your_level) + stringResource(id = R.string.starter),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = textColor
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "0",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(id = R.string.coin),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = textColor,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp, end = 16.dp, bottom = 4.dp)
+                                    .background(BackgroundLight)
+                                    .clip(
+                                        CircleShape
+                                    ),
+                                progress = 0f,
+                            )
+                            Text(
+                                text = "100 " + stringResource(id = R.string.left_after_next_level),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = textColor
+                            )
+
+                        }
+
+                    }
+                    OutlinedButton(
+                        onClick = { },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 12.dp, end = 12.dp, bottom = 10.dp, top = 4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.exchange),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.Black
+                        )
+
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp)
+                        .shadow(elevation = 2.dp, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(securityCardStartColor, securityCardEndColor)
+                            )
+                        )
+                ) {
+                    Row(Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                modifier = Modifier.padding(top = 12.dp, start = 12.dp),
+                                text = stringResource(id = R.string.paynet_security),
+                                color = Color.White,
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                            Text(
+                                text = stringResource(id = R.string.upgrade_security),
+                                modifier = Modifier.padding(start = 12.dp),
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
+                                text = stringResource(id = R.string.want_to),
+                                modifier = Modifier.padding(start = 12.dp),
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Button(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 12.dp, bottom = 12.dp, top = 8.dp
+                                    )
+                                    .height(36.dp),
+                                onClick = {  },
+                                colors = ButtonDefaults.buttonColors(white),
+
+                                ) {
+                                Text(
+                                    text = stringResource(id = R.string.verify_identity),
+                                    color = Color.Black,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(0.7f)
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.securety_identification),
+                                contentDescription = "security",
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(240.dp)
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                ) {
+                    Log.d("TTT",cards.toString())
+                    if (cards.isEmpty()) {
+                        MyCardsEmpty(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .weight(1f),
+                            onClickAddCard = {
+                                onEventDispatcher.invoke(MainContract.Intent.OpenAddScreen)
+                            }
+                        )
+                    } else if (cards.size == 1) {
+                        MyCardsOneCard(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .weight(1f),
+                            onClickAddCard = {
+                                onEventDispatcher.invoke(MainContract.Intent.OpenAddScreen)
+                            },
+                            onClickCard = {
+                                onEventDispatcher.invoke(
+                                    MainContract.Intent.OpenPaynetCardScreen(it))
+                            },
+                            card = cards[0]
+                        )
+                    } else if (cards.size == 2) {
+                        MyCardsTwoCards(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .weight(1f),
+                            onClickAddCard = { onEventDispatcher.invoke(MainContract.Intent.OpenAddScreen) },
+                            onClickFrontCard = {
+                                onEventDispatcher.invoke(MainContract.Intent.OpenPaynetCardScreen(it))
+                            },
+                            onClickBackCard = {
+                                onEventDispatcher.invoke(
+                                    MainContract.Intent.OpenPaynetCardScreen(
+                                        it
+                                    )
+                                )
+                            },
+                            frontCard = cards[0],
+                            backCard = cards[1]
+                        )
+                    } else {
+                        MyCardsMoreCards(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .weight(1f),
+                            onAllCardClick = {
+                                onEventDispatcher.invoke(MainContract.Intent.OpenAllCardsScreen(cards))
+                            },
+                            onClickAddCard = { onEventDispatcher.invoke(MainContract.Intent.OpenAddScreen) },
+                            onClickFrontCard = {
+                                onEventDispatcher.invoke(
+                                    MainContract.Intent.OpenPaynetCardScreen(it))
+                            },
+                            onClickBackCard = {
+                                onEventDispatcher.invoke(
+                                    MainContract.Intent.OpenPaynetCardScreen(it))
+                            },
+                            cards = cards
+                        )
+                    }
+
+                    CashBack(
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .weight(1f),
+                        isVisibleMoney = true,
+                        money = money.value.toString()
+                    )
+                }
+                val a = 1000000000000000000L
+
+
+//                CardAvia()
+//                CardMyHouse()
+//                CardMIB()
+
+
+                Spacer(modifier = Modifier.padding(16.dp))
+            }
+
+        }
+    }
+}
+
+
+
+fun gcd(x: Long, y: Long): Long = if (y == 0L) x else gcd(y, x % y)
+fun lcm(x: Long, y: Long): Long = (x * y) / gcd(x, y)
+
+fun countValidNumbers(limit: Long, a: Int, b: Int, c: Int): Long {
+    val ab = lcm(a.toLong(), b.toLong())
+    val ac = lcm(a.toLong(), c.toLong())
+    val bc = lcm(b.toLong(), c.toLong())
+    val abc = lcm(ab, c.toLong())
+
+    return (limit / ab + limit / ac + limit / bc - 3 * (limit / abc))
+}
+
+fun findNthNumber(a: Int, b: Int, c: Int, n: Long): Long {
+    val limit = 1000000000000000000L
+    var low = 1L
+    var high = limit
+
+    while (low < high) {
+        val mid = (low + high) / 2
+        val count = countValidNumbers(mid, a, b, c)
+
+        if (count >= n) {
+            high = mid
+        } else {
+            low = mid + 1
+        }
+    }
+
+    return if (low <= limit) low else -1
+}
+
+fun main() {
+
+    try {
+        val (a,b,c)=readln().split(" ").map { it.toInt() }
+        val n = readln().toLong()
+        val result = findNthNumber(a, b, c, n)
+        println(result)
+    }catch (e:Exception){
+        val n = readln().toLong()
+
+        println(-1)
+    }
+
 }

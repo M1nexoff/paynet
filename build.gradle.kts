@@ -5,3 +5,6 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }
+ext{
+    set("adsada",23132131)
+}

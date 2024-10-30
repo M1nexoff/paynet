@@ -6,9 +6,9 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import uz.gita.m1nex.core.data.model.sign.SignUp
 import uz.gita.m1nex.core.onFailure
 import uz.gita.m1nex.core.onSuccess
-import uz.gita.m1nex.entity.data.model.request.SignUpRequest
 import uz.gita.m1nex.usecase.signup.AuthUseCase
 import javax.inject.Inject
 
@@ -42,6 +42,15 @@ internal class SignUpScreenModelImpl @Inject constructor(
     override val container: Container<SignUpContract.UiState, SignUpContract.SideEffect> =
         container(getDefault())
 
-    private fun getDefault() = SignUpContract.UiState.Default(SignUpRequest("", "", "", "", "", ""))
+    private fun getDefault() = SignUpContract.UiState.Default(
+        SignUp(
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        )
+    )
 
 }

@@ -12,11 +12,11 @@ internal class HomeScreenModelImpl @Inject constructor(
     }
     override fun onEventDispatcher(intent: HomeContract.Intent) {
         when(intent){
-            HomeContract.Intent.Back -> {  }
+            else -> {}
         }
     }
 
     override val container: Container<HomeContract.UiState, HomeContract.SideEffect> = container(getDefault())
 
-    private fun getDefault() = HomeContract.UiState.Default
+    private fun getDefault() = HomeContract.UiState.DefaultState
 }

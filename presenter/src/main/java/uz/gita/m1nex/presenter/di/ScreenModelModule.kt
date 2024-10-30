@@ -7,12 +7,19 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
+import uz.gita.m1nex.presenter.screenmodel.addcard.AddCardScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.card.CardScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.history.HistoryScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.home.HomeScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.home.tab.main.MainScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.password.PasswordScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.profile.ProfileScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.signin.SignInScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.signup.SignUpScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.splash.SplashScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.transfer.TransferScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.transfer.card.TransferCardScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.transfer.verify.TransferVerifyScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.verify.VerifyScreenModelImpl
 
 @Module
@@ -54,4 +61,38 @@ internal interface ScreenModelModule {
     @ScreenModelKey(MainScreenModelImpl::class)
     fun bindMainScreenModelImpl(model: MainScreenModelImpl): ScreenModel
 
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ProfileScreenModelImpl::class)
+    fun bindProfileScreenModelImpl(model: ProfileScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(AddCardScreenModelImpl::class)
+    fun bindAddCardScreenModelImpl(model: AddCardScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(CardScreenModelImpl::class)
+    fun bindCardScreenModelImpl(model: CardScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(TransferScreenModelImpl::class)
+    fun bindTransferScreenModelImpl(model: TransferScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(TransferCardScreenModelImpl::class)
+    fun bindTransferCardScreenModelImpl(model: TransferCardScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(TransferVerifyScreenModelImpl::class)
+    fun bindTransferVerifyScreenModelImpl(model: TransferVerifyScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(HistoryScreenModelImpl::class)
+    fun bindHistoryScreenModelImpl(model: HistoryScreenModelImpl): ScreenModel
 }

@@ -2,10 +2,7 @@ package uz.gita.m1nex.entity.repository.impl
 
 import kotlinx.coroutines.Dispatchers
 import uz.gita.m1nex.core.ResultData
-import uz.gita.m1nex.core.fail
-import uz.gita.m1nex.core.onFail
-import uz.gita.m1nex.core.onSuccess
-import uz.gita.m1nex.core.success
+import uz.gita.m1nex.core.data.model.BasicInfo
 import uz.gita.m1nex.core.withContextSafety
 import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.data.model.request.UpdateInfoRequest
@@ -14,6 +11,7 @@ import uz.gita.m1nex.entity.data.model.respone.FullInfoResponse
 import uz.gita.m1nex.entity.data.model.respone.LastTransfersResponse
 import uz.gita.m1nex.entity.data.remote.HomeApi
 import uz.gita.m1nex.entity.data.util.mapTo
+import uz.gita.m1nex.entity.data.util.toBasicInfo
 import uz.gita.m1nex.entity.data.util.toResultData
 import uz.gita.m1nex.entity.repository.HomeRepository
 import javax.inject.Inject
@@ -26,12 +24,21 @@ internal class HomeRepositoryImpl @Inject constructor(
     override suspend fun getTotalBalance(): ResultData<Int> = withContextSafety(Dispatchers.IO) {
         homeApi.getTotalBalance()
             .toResultData()
-            .mapTo { it.totalBalance }
+            .mapTo {
+                localStorage.totalBalance = it.totalBalance
+                it.totalBalance
+            }
     }
 
-    override suspend fun getBasicUserInfo(): ResultData<BasicInfoResponse> = withContextSafety(Dispatchers.IO) {
+    override suspend fun getBasicUserInfo(): ResultData<BasicInfo> = withContextSafety(Dispatchers.IO) {
         homeApi.getBasicInfo()
             .toResultData()
+            .mapTo {
+                localStorage.firstName = it.firstName
+                localStorage.genderType = it.genderType
+                localStorage.age = it.age
+                it.toBasicInfo()
+            }
     }
 
     override suspend fun getFullUserInfo(): ResultData<FullInfoResponse> = withContextSafety(Dispatchers.IO) {
@@ -48,5 +55,9 @@ internal class HomeRepositoryImpl @Inject constructor(
         homeApi.updateUserInfo(updateUserInfoRequest)
             .toResultData()
             .mapTo {  }
+    }
+
+    override suspend fun getPhone(): ResultData<String> = withContextSafety(Dispatchers.IO){
+        ResultData.Success(localStorage.phone)
     }
 }

@@ -18,6 +18,13 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -41,28 +48,31 @@ dependencies {
     implementation(libs.material)
     implementation(project(":common"))
     implementation(project(":usecase"))
-    implementation(project(":entity"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    //Paging
+    val paging_version = "3.3.0"
+    implementation("androidx.paging:paging-runtime:$paging_version")
+    implementation("androidx.paging:paging-compose:3.3.0")
 
 
     //HILT
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    //VOYAGER
-    implementation(libs.voyager.navigator)
-    implementation(libs.voyager.screenmodel)
-    implementation(libs.voyager.hilt)
-    implementation(libs.voyager.transitions)
-    implementation(libs.voyager.livedata)
-    implementation(libs.voyager.bottom.sheet.navigator)
-    implementation(libs.voyager.tab.navigator)
+        //VOYAGER
+        implementation(libs.voyager.navigator)
+        implementation(libs.voyager.screenmodel)
+        implementation(libs.voyager.hilt)
+        implementation(libs.voyager.transitions)
+        implementation(libs.voyager.livedata)
+        implementation(libs.voyager.bottom.sheet.navigator)
+        implementation(libs.voyager.tab.navigator)
 
-    implementation(libs.orbit.core)
-    implementation(libs.orbit.viewmodel)
-    implementation(libs.orbit.compose)
-    testImplementation(libs.orbit.test)
+        implementation(libs.orbit.core)
+        implementation(libs.orbit.viewmodel)
+        implementation(libs.orbit.compose)
+        testImplementation(libs.orbit.test)
 
 }

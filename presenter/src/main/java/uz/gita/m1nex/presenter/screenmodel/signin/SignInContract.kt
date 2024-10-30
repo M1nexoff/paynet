@@ -1,12 +1,8 @@
 package uz.gita.m1nex.presenter.screenmodel.signin
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import kotlinx.coroutines.Job
 import uz.gita.m1nex.core.MessageData
 import uz.gita.m1nex.core.ScreenModelImpl
-import uz.gita.m1nex.entity.data.model.request.SignInRequest
 import uz.gita.m1nex.presenter.AppViewModel
-import uz.gita.m1nex.presenter.screenmodel.signup.SignUpContract
 
 interface SignInContract {
     @ScreenModelImpl(SignInScreenModelImpl::class)
@@ -21,7 +17,7 @@ interface SignInContract {
     sealed interface UiState {
         data object Progress : UiState
         data class Error(val message: MessageData, val isNetworkError: Boolean = false) : UiState
-        data class Default(val signInRequest: SignInRequest) : UiState
+        data class Default(val signInRequest: uz.gita.m1nex.core.data.model.sign.SignIn) : UiState
     }
 
 
@@ -30,7 +26,7 @@ interface SignInContract {
 
     sealed interface Intent {
         data object Language : Intent
-        data class SignIn(val signInRequest: SignInRequest) : Intent
+        data class SignIn(val signInRequest: uz.gita.m1nex.core.data.model.sign.SignIn) : Intent
         data object Back : Intent
     }
 }

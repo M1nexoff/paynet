@@ -1,5 +1,6 @@
 package uz.gita.m1nex.paynet.app
 
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.MotionEvent
@@ -28,11 +29,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var appNavigator: AppNavigator
+        @Inject
+        lateinit var appNavigator: AppNavigator
 
-    @Inject
-    lateinit var appNavigatorHandler: AppNavigatorHandler
+        @Inject
+        lateinit var appNavigatorHandler: AppNavigatorHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +50,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun getResources(): Resources {

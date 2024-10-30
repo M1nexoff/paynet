@@ -7,7 +7,5 @@ import javax.inject.Inject
 class HomeDirectionImpl @Inject constructor(
     private val navigator: AppNavigator
 ): HomeContract.Direction {
-    override suspend fun back() {
 
-    }
 }

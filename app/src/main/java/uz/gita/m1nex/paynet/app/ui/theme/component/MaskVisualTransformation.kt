@@ -41,3 +41,66 @@ class MaskVisualTransformation(private val mask: String) : VisualTransformation 
         }
     }
 }
+
+class MoneyVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        // Keep only digits
+        val digits = text.text.filter {
+            it.isLetterOrDigit()
+        }
+        val stringBuilder = StringBuilder()
+
+        // Insert spaces after every 3 digits from the right
+        var counter = 0
+        for (i in digits.length - 1 downTo 0) {
+            stringBuilder.append(digits[i])
+            counter++
+            if (counter == 3 && i != 0) {
+                stringBuilder.append(' ')
+                counter = 0
+            }
+        }
+        stringBuilder.reverse()
+
+        val newText = stringBuilder.toString()
+
+        // Create an offset mapping to correlate original text indexing with transformed text
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset > digits.length) return newText.length
+
+                var transformedOffset = offset
+                var spaces = 0
+
+                for (i in digits.indices) {
+                    if (i == transformedOffset) break
+                    if ((digits.length - i) % 3 == 0 && i != 0) {
+                        spaces++
+                    }
+                }
+
+                return transformedOffset + spaces
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset > newText.length) return digits.length
+
+                var originalOffset = offset
+                var spaces = 0
+
+                for (i in newText.indices) {
+                    if (i == originalOffset) break
+                    if (newText[i] == ' ') {
+                        spaces++
+                    }
+                }
+
+                return originalOffset - spaces
+            }
+        }
+
+        return TransformedText(AnnotatedString(newText), offsetMapping)
+    }
+}

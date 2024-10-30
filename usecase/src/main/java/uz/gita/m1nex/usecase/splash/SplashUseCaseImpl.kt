@@ -1,6 +1,7 @@
 package uz.gita.m1nex.usecase.splash
 
 import android.util.Log
+import androidx.annotation.Keep
 import kotlinx.coroutines.flow.Flow
 import uz.gita.m1nex.core.ResultData
 import uz.gita.m1nex.core.data.LaunchData
