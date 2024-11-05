@@ -12,6 +12,7 @@ interface ProfileContract {
     interface Direction {
         suspend fun navigateToBack()
         suspend fun navigateToSignUp()
+        suspend fun navigateToUpdate()
     }
 
     sealed interface UiState {

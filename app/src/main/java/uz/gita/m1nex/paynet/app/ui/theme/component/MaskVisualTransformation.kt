@@ -96,11 +96,9 @@ class MoneyVisualTransformation : VisualTransformation {
                         spaces++
                     }
                 }
-
                 return originalOffset - spaces
             }
         }
-
         return TransformedText(AnnotatedString(newText), offsetMapping)
     }
 }

@@ -1,5 +1,6 @@
 package uz.gita.m1nex.core.data.model.card
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -18,3 +19,14 @@ data class CardData(
     @SerializedName("is-visible")
     val isVisible: Boolean,
 ):Serializable
+
+
+@Keep
+data class UpdateCardRequest(
+    val id: Long,
+    val name: String,
+    @SerializedName("theme-type")
+    val themeType: Int,
+    @SerializedName("is-visible")
+    val isVisible: Boolean
+)

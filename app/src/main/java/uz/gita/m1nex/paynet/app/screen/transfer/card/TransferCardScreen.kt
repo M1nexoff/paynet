@@ -2,11 +2,14 @@ package uz.gita.m1nex.paynet.app.screen.transfer.card
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -32,7 +35,7 @@ import uz.gita.m1nex.core.hiltScreenModel
 import uz.gita.m1nex.core.previewStateOf
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.screen.addcard.TopSection
-import uz.gita.m1nex.paynet.app.ui.dialog.CardsSheetDialog
+import uz.gita.m1nex.paynet.app.ui.dialog.OptionBottomSheetContent
 import uz.gita.m1nex.paynet.app.ui.theme.component.AppButton
 import uz.gita.m1nex.paynet.app.ui.theme.component.CardP2PSendItem
 import uz.gita.m1nex.paynet.app.ui.theme.component.CardP2PWithCardNumber
@@ -40,59 +43,87 @@ import uz.gita.m1nex.paynet.app.ui.theme.component.PayToInput
 import uz.gita.m1nex.paynet.app.ui.theme.mainBgLight
 import uz.gita.m1nex.presenter.screenmodel.transfer.card.TransferCardContract
 
-class TransferCardScreen(private val cardReceiverPan: String, private val cardOwner: String, private val panKey: Int = 0) :
+class TransferCardScreen(
+    private val cardReceiverPan: String,
+    private val cardOwner: String,
+    private val panKey: Int = 0
+) :
     Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val viewModel: TransferCardContract.Model = hiltScreenModel()
         viewModel.onEventDispatcher(TransferCardContract.Intent.GetCards)
         val context = LocalContext.current
         val bottomSheetNavigator = LocalNavigator.currentOrThrow
-        viewModel.collectSideEffect { sideEffect ->
-            when (sideEffect) {
-                is TransferCardContract.SideEffect.ShowAllCardsDialog -> {
-//                    "TransferMoneySendScreen ShowAllCardsDialog".myLog()
-                    bottomSheetNavigator.push(
-                        CardsSheetDialog(list = sideEffect.cardList,
-                        onCardClick = {
-                            if (it.pan.endsWith(cardReceiverPan)) {
-                                Toast.makeText(context, "Karta raqamlari bir xil", Toast.LENGTH_SHORT).show()
-                            } else {
-                                viewModel.onEventDispatcher(
-                                    TransferCardContract.Intent.SelectCurrentCard(
-                                        it
+        val isShowDialog = remember { mutableStateOf(false) }
+        val list = remember { mutableListOf<CardData>() }
+
+        Box {
+            P2PContent(
+                panKey = panKey,
+                cardOwner = cardOwner,
+                cardReceiverPan = cardReceiverPan,
+                uiState = viewModel.collectAsState(),
+                onEventDispatcher = viewModel::onEventDispatcher
+            )
+            if (isShowDialog.value) {
+                ModalBottomSheet(containerColor = Color.White, onDismissRequest = {
+                    isShowDialog.value = false
+                }
+                ) {
+                    Box {
+                        OptionBottomSheetContent(list = list,
+                            onCardClick = {
+                                if (it.pan.endsWith(cardReceiverPan)) {
+                                    Toast.makeText(
+                                        context,
+                                        "Karta raqamlari bir xil",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    viewModel.onEventDispatcher(
+                                        TransferCardContract.Intent.SelectCurrentCard(
+                                            it
+                                        )
                                     )
-                                )
-                                bottomSheetNavigator.pop()
-                            }
-//                            bottomSheetNavigator.hide()
-                        },
-                        onAddButtonClick = {
-                            viewModel.onEventDispatcher(TransferCardContract.Intent.ToAddCardScreen)
-                            bottomSheetNavigator.pop()
-//                            bottomSheetNavigator.hide()
-                        })
-                    )
+                                    isShowDialog.value= false
+                                }
+                            },
+                            onAddButtonClick = {
+                                viewModel.onEventDispatcher(TransferCardContract.Intent.ToAddCardScreen)
+                                isShowDialog.value= false
+                            })
+                    }
                 }
 
-                is TransferCardContract.SideEffect.Toast -> {
+            }
+
+            viewModel.collectSideEffect { sideEffect ->
+                when (sideEffect) {
+                    is TransferCardContract.SideEffect.ShowAllCardsDialog -> {
+//                    "TransferMoneySendScreen ShowAllCardsDialog".myLog()
+//                    bottomSheetNavigator.push(
+//                    )
+                        list.clear()
+                        list.addAll(sideEffect.cardList)
+                        isShowDialog.value = true
+                    }
+
+                    is TransferCardContract.SideEffect.Toast -> {
 //                    context.toToast(sideEffect.message)
-                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+
+                    }
                 }
+
             }
         }
-        P2PContent(
-            panKey = panKey,
-            cardOwner = cardOwner,
-            cardReceiverPan = cardReceiverPan,
-            uiState = viewModel.collectAsState(),
-            onEventDispatcher = viewModel::onEventDispatcher
-        )
     }
 }
 
 @Composable
-private fun P2PContent(
+fun P2PContent(
     panKey: Int,
     cardReceiverPan: String,
     cardOwner: String,
@@ -106,7 +137,7 @@ private fun P2PContent(
     val focusRequester = remember { FocusRequester() }
     var isTransferButtonEnabled by remember { mutableStateOf(true) }
 
-    var currentCard by remember {
+    var currentCard = remember {
         mutableStateOf(CardData("0", "Personal", 0L, "Ali", "0036", 2029, 9, 4, true))
     }
 
@@ -117,7 +148,7 @@ private fun P2PContent(
         }
 
         is TransferCardContract.UIState.CurrentCard -> {
-            currentCard = uiStateValue.cardData
+            currentCard.value = uiStateValue.cardData
         }
     }
     Column(
@@ -127,7 +158,7 @@ private fun P2PContent(
             .padding(12.dp)
     ) {
         TopSection(text = R.string.transfer_to_card) {
-
+            onEventDispatcher.invoke(TransferCardContract.Intent.Back)
         }
 
         Text(
@@ -137,13 +168,15 @@ private fun P2PContent(
             letterSpacing = 0.8.sp
         )
 
-        CardP2PSendItem(cardNumber = currentCard,
+        CardP2PSendItem(
+            cardNumber = currentCard,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 2.dp),
             onClickItem = {
                 onEventDispatcher.invoke(TransferCardContract.Intent.ClickAllCardsDialog)
-            })
+            }
+        )
 
         Text(
             text = stringResource(R.string.to),
@@ -168,12 +201,12 @@ private fun P2PContent(
             onClickScan = {},
             onValueChange = {
                 if (it.isNotEmpty()) {
-                    isInsufficiencies = it.toLong() >= currentCard.amount
-                    isBigMoney = it.toLong() >= 50_000_000
+                    isInsufficiencies = it.toLong() >= currentCard.value.amount
+                    isBigMoney = it.toLong() > 150_000_000
                 }
                 paySum = it
                 isTransferButtonEnabled = (if (it.isNotEmpty()) {
-                    it.toLong() in 1_000..50_000_000
+                    it.toLong() in 1_000..150_000_000
                 } else false)
             },
             focusRequester = focusRequester,
@@ -184,7 +217,8 @@ private fun P2PContent(
 
         if (isInputIncorrect) {
             Text(
-                modifier = Modifier.padding(8.dp), text = stringResource(R.string.commission_0)
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.commission_0)
             )
         }
         if (isBigMoney) {
@@ -209,14 +243,18 @@ private fun P2PContent(
             text = stringResource(R.string.transfer),
             enabled = isTransferButtonEnabled && !isInsufficiencies,
             onClick = {
-                if (currentCard.pan.endsWith(cardReceiverPan)) {
+                if (currentCard.value.pan.endsWith(cardReceiverPan)) {
 //                    "Karta raqamlari bir xil".toToast(context)
-                    Toast.makeText(context, "Karta raqamlari bir xil", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Karta raqamlari bir xil", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
 //                    localStorage.tempUser = cardOwner
                     onEventDispatcher(
                         TransferCardContract.Intent.Pay(
-                            senderId = currentCard.pan, receiverPan = cardReceiverPan, amount =  paySum.toInt(), pankey = panKey
+                            senderId = currentCard.value.pan,
+                            receiverPan = cardReceiverPan,
+                            amount = paySum.toInt(),
+                            pankey = panKey
                         )
                     )
                 }

@@ -1,6 +1,7 @@
 package uz.gita.m1nex.presenter.screenmodel.transfer.card
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -28,14 +29,20 @@ internal class TransferCardScreenModelImpl @Inject constructor(
             if (card == null) {
                 it.onSuccess {
                     allCards = this
-                    card = this[0]
+                    card = this.getOrElse(0){
+                        CardData("-1","Paynet Card",0,"","",28,6,0,true)
+                    }
+                    delay(200L)
                     intent {
-                        this@intent.reduce { TransferCardContract.UIState.CurrentCard(this@onSuccess[0]) }
+                        this@intent.reduce { TransferCardContract.UIState.CurrentCard(card ?: this@onSuccess.getOrElse(0){
+                            CardData("-1","Paynet Card",0,"","",28,6,0,true)
+                        }) }
                     }
                 }
             }
         }.launchIn(screenModelScope)
     }
+    
     private var card: CardData? = null
     private var allCards: List<CardData> = ArrayList()
     override fun onEventDispatcher(intent: TransferCardContract.Intent) = intent {
@@ -49,15 +56,17 @@ internal class TransferCardScreenModelImpl @Inject constructor(
             }
 
             is TransferCardContract.Intent.SelectCurrentCard -> {
-                reduce { TransferCardContract.UIState.CurrentCard(intent.it) }
                 card = intent.it
+                reduce { TransferCardContract.UIState.CurrentCard(card!!) }
             }
 
             TransferCardContract.Intent.GetCards -> {
                 cardUseCase.getCards().onEach {
                     it.onSuccess {
                         allCards = this
-                        this@intent.reduce { TransferCardContract.UIState.CurrentCard(this@onSuccess[0]) }
+                        this@intent.reduce { TransferCardContract.UIState.CurrentCard(card?: this@onSuccess.getOrElse(0){
+                            CardData("-1","Paynet Card",0,"","",28,6,0,true)
+                        }) }
 
                     }
                 }.launchIn(screenModelScope)

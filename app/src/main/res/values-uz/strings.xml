@@ -112,7 +112,7 @@
     <string name="last">So\'ngi</string>
     <string name="transaction">Tranzaksiya</string>
     <string name="from">dan</string>
-    <string name="transfer_to_card">kartaga otkazish</string>
+    <string name="transfer_to_card">Kartaga otkazish</string>
     <string name="to">ga</string>
     <string name="commission_0">Kommisiya 0%</string>
     <string name="insufficient_funds">Mablag\' yetarli emas</string>
@@ -125,5 +125,8 @@
     <string name="transfer_options">O\'tkazma tafsilotlari</string>
     <string name="download_check">Chekni yuklab olish</string>
     <string name="operation_success">Operatsiya bajarildi</string>
+    <string name="you_are_not_verified">Sizni shxsingiz tasdiqlanmagan</string>
+    <string name="update_data">Update Card</string>
+    <string name="personal_cabinet">Personal Cabinet</string>
 
 </resources>

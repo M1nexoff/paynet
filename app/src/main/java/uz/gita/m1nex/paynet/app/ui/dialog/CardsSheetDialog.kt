@@ -1,11 +1,13 @@
 package uz.gita.m1nex.paynet.app.ui.dialog
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,7 +49,7 @@ class CardsSheetDialog(
 ) : Screen {
     @Composable
     override fun Content() {
-        PaynetOfficialTheme {
+        Box{
             OptionBottomSheetContent(
                 list = list,
                 onAddButtonClick = onAddButtonClick,
@@ -54,20 +57,27 @@ class CardsSheetDialog(
                     onCardClick.invoke(it)
                 },
             )
-        }
-    }
+        }    }
 }
 
 
 @Composable
-fun OptionBottomSheetContent(
+fun BoxScope.OptionBottomSheetContent(
     onAddButtonClick: () -> Unit,
     list: List<CardData>,
     onCardClick: (CardData) -> Unit,
+    close: ()->Unit = {}
 ) {
+    BackHandler {
+        close.invoke()
+    }
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+            .fillMaxWidth(1f)
+            .wrapContentHeight()
+            .clip(RoundedCornerShape(12, 12))
+            .background(Color.White)
             .padding(16.dp)
     ) {
         Text(
@@ -78,7 +88,7 @@ fun OptionBottomSheetContent(
             modifier = Modifier
         )
 
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        LazyColumn(modifier = Modifier.fillMaxWidth(1f)) {
             items(items = list) {
                 SheetCardItem(data = it, modifier = Modifier) {
                     onCardClick.invoke(it)
@@ -130,12 +140,14 @@ fun SheetCardItem(
             .clickable { onClickItem() },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box( modifier = Modifier
+            Box(
+                modifier = Modifier
 
-                .clip(RoundedCornerShape(8.dp))
-                .background(brush = getGradient(data.themeType))
-                .height(48.dp)
-                .width(64.dp)) {
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(brush = getGradient(data.themeType))
+                    .height(48.dp)
+                    .width(64.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_humo), contentDescription = null,
                     modifier = Modifier
@@ -149,7 +161,10 @@ fun SheetCardItem(
                     .padding(start = 8.dp)
             ) {
                 Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                    TextBoldBlack(text = "${data.owner} • ${data.pan}", style = MaterialTheme.typography.labelLarge)
+                    TextBoldBlack(
+                        text = "${data.owner} • ${data.pan}",
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
 
                 Row(modifier = Modifier.padding(bottom = 4.dp)) {
@@ -168,19 +183,21 @@ fun SheetCardItem(
 @Preview(showBackground = true)
 private fun OptionBottomSheetContentPreview() {
     PaynetOfficialTheme {
-        val list = listOf(
-            CardData("", "Gita Card", 0L, "AZZAm", "0036003600360036", 2020, 8, 2, false),
-            CardData("", "Gita Card", 0L, "M1nex", "0036003600360036", 2020, 8, 2, false),
-            CardData("", "Gita Card", 0L, "Abu", "0036003600360036", 2020, 8, 2, false),
-            CardData("", "Gita Card", 0L, "Yusuf", "0036003600360036", 2020, 8, 2, false),
-            CardData("", "Gita Card", 0L, "Abdulloh", "0036003600360036", 2020, 8, 2, false),
-        )
-        OptionBottomSheetContent(
-            list = list,
-            onAddButtonClick = {},
-            onCardClick = {
+        Box {
+            val list = listOf(
+                CardData("", "Gita Card", 0L, "AZZAm", "0036003600360036", 2020, 8, 2, false),
+                CardData("", "Gita Card", 0L, "M1nex", "0036003600360036", 2020, 8, 2, false),
+                CardData("", "Gita Card", 0L, "Abu", "0036003600360036", 2020, 8, 2, false),
+                CardData("", "Gita Card", 0L, "Yusuf", "0036003600360036", 2020, 8, 2, false),
+                CardData("", "Gita Card", 0L, "Abdulloh", "0036003600360036", 2020, 8, 2, false),
+            )
+            OptionBottomSheetContent(
+                list = list,
+                onAddButtonClick = {},
+                onCardClick = {
 
-            },
-        )
+                },
+            )
+        }
     }
 }

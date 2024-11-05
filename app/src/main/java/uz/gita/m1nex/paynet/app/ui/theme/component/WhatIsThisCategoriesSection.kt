@@ -27,6 +27,7 @@ import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.BackgroundWhite90
 import uz.gita.m1nex.paynet.app.ui.theme.Gray70
 import uz.gita.m1nex.paynet.app.ui.theme.grayIcon
+import uz.gita.m1nex.paynet.app.ui.theme.spotColor
 import uz.gita.m1nex.paynet.app.ui.theme.textColorLight90
 
 @Composable
@@ -41,7 +42,7 @@ fun WhatIsThisCategoriesSection(
         modifier = modifier
             .padding(top = 4.dp, bottom = 4.dp)
             .fillMaxWidth()
-            .shadow(elevation = 2.dp, RoundedCornerShape(16.dp), ambientColor = Color.White, spotColor = Color(0xFF808080))
+            .shadow(elevation = 2.dp, RoundedCornerShape(16.dp), ambientColor = Color.White, spotColor = spotColor)
             .clip(RoundedCornerShape(16.dp))
             .background(BackgroundWhite90)
             .padding(vertical = 12.dp, horizontal = 16.dp)

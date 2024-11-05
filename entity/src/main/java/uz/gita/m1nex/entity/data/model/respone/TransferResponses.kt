@@ -1,4 +1,4 @@
-package uz.gita.m1nex.entity.data.model.respone
+package uz.gita.m1nex.core.data.model
 
 import com.google.gson.annotations.SerializedName
 import uz.gita.m1nex.core.data.model.Child

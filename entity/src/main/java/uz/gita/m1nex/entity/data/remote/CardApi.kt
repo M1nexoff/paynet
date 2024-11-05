@@ -7,18 +7,24 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import uz.gita.m1nex.entity.data.model.respone.AddCard
+import uz.gita.m1nex.core.data.model.AddCard
 import uz.gita.m1nex.entity.data.model.request.AddCardRequest
 import uz.gita.m1nex.core.data.model.card.CardData
-import uz.gita.m1nex.entity.data.model.respone.DeleteCard
-import uz.gita.m1nex.entity.data.model.respone.UpdateCard
-import uz.gita.m1nex.entity.data.model.request.UpdateCardRequest
+import uz.gita.m1nex.core.data.model.DeleteCard
+import uz.gita.m1nex.core.data.model.UpdateCard
+import uz.gita.m1nex.core.data.model.card.UpdateCardRequest
+import uz.gita.m1nex.entity.data.local.ForceLocalCache
+import uz.gita.m1nex.entity.data.local.ForceNetwork
 
 internal interface CardApi {
 
-
+    @ForceNetwork
     @GET("v1/card")
     suspend fun getCards(): Response<List<CardData>>
+
+    @ForceLocalCache
+    @GET("v1/card")
+    suspend fun getCardsCache(): Response<List<CardData>>
 
     @POST("v1/card")
     suspend fun addCard(@Body request: AddCardRequest): Response<AddCard>
@@ -27,7 +33,7 @@ internal interface CardApi {
     suspend fun updateCard(@Body request: UpdateCardRequest): Response<UpdateCard>
 
     @DELETE("v1/card/{id}")
-    suspend fun deleteCard(@Path("id") cardId: Int): Response<DeleteCard>
+    suspend fun deleteCard(@Path("id") cardId: String): Response<DeleteCard>
 
 
 }

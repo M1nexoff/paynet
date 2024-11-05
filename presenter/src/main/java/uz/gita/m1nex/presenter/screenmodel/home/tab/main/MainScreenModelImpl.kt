@@ -23,24 +23,6 @@ internal class MainScreenModelImpl @Inject constructor(
     private val cardUseCase: CardUseCase
 ) : MainContract.Model {
     init {
-        Log.d("TTT", "MainScreenInit: init")
-        homeUseCase.getBasicUserInfo().onSuccess {
-            val firstName = it.firstName
-            intent { reduce { MainContract.UiState.BasicState(it.firstName) } }
-            homeUseCase.getTotalBalance().onSuccess {
-                intent { reduce { MainContract.UiState.BasicState(firstName, it) } }
-            }.onFailure {
-                Log.d("TTT", "MainScreenInit: firstName ${it.toString()}")
-            }.launchIn(screenModelScope)
-            Log.d("TTT", "MainScreenInit: firstName ${it.firstName}")
-        }.onFailure {
-            Log.d("TTT", "MainScreenInit: firstName ${it.toString()}")
-        }.launchIn(screenModelScope)
-        cardUseCase.getCards().onSuccess {
-            intent { reduce { MainContract.UiState.CardsState(it) } }
-        }.onFailure {
-            Log.d("TTT", "MainScreenModelImpl: ${it.toString()}")
-        }.launchIn(screenModelScope)
     }
     override fun onEventDispatcher(intent: MainContract.Intent) = intent {
         when (intent) {
@@ -90,11 +72,31 @@ internal class MainScreenModelImpl @Inject constructor(
             }
 
             is MainContract.Intent.OpenAllCardsScreen -> {
-                direction.openCardsScreen(intent.cards)
+                postSideEffect(MainContract.SideEffect.ShowAllCardsDialog(intent.cards))
             }
         }
     }
+    override fun onInit(){
+        Log.d("TTT", "MainScreenInit: init")
+        homeUseCase.getBasicUserInfo().onSuccess {
+            val firstName = it.firstName
+            intent { reduce { MainContract.UiState.BasicState(it.firstName) } }
+            homeUseCase.getTotalBalance().onSuccess {
+                intent { reduce { MainContract.UiState.BasicState(firstName, it) } }
+            }.onFailure {
+                Log.d("TTT", "MainScreenInit: firstName ${it.toString()}")
+            }.launchIn(screenModelScope)
+            Log.d("TTT", "MainScreenInit: firstName ${it.firstName}")
+        }.onFailure {
+            Log.d("TTT", "MainScreenInit: firstName ${it.toString()}")
+        }.launchIn(screenModelScope)
+        cardUseCase.getCards().onSuccess {
+            intent { reduce { MainContract.UiState.CardsState(it) } }
+        }.onFailure {
+            Log.d("TTT", "MainScreenModelImpl: ${it.toString()}")
+        }.launchIn(screenModelScope)
 
+    }
     override val container: Container<MainContract.UiState, MainContract.SideEffect> = container(getDefault())
 
     private fun getDefault() = MainContract.UiState.Default

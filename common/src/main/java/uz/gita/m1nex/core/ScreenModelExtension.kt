@@ -188,3 +188,41 @@ fun getGradient(type: Int): Brush = when (type) {
         Brush.verticalGradient(listOf(Color(0xFFa95403), Color(0xFFecbe38)))
     }
 }
+
+fun getColors(type: Int): List<Color> = when (type) {
+    0 -> {
+        listOf(Color(0xFF0063B5), Color(0xFF00EBC8))
+    }
+
+    1 -> {
+        listOf(Color(0xFF06693a), Color(0xFF20d970))
+    }
+
+    2 -> {
+        listOf(Color(0xFF5b0a8a), Color(0xFFa9518d))
+    }
+
+    3 -> {
+        listOf(Color(0xFF930709), Color(0xFFff9c63))
+    }
+
+    4 -> {
+        listOf(Color(0xFF886e33), Color(0xFFffd645))
+    }
+
+    5 -> {
+        listOf(Color(0xFF282a75), Color(0xFF009ffd))
+    }
+
+    6 -> {
+        listOf(Color(0xFF191a1f), Color(0xFF55555f))
+    }
+
+    7 -> {
+        listOf(Color(0xFF6c0f17), Color(0xFFbd1373))
+    }
+
+    else -> {
+        listOf(Color(0xFFa95403), Color(0xFFecbe38))
+    }
+}

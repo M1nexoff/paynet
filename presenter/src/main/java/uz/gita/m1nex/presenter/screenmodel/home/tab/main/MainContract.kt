@@ -8,6 +8,7 @@ interface MainContract {
     @ScreenModelImpl(MainScreenModelImpl::class)
     interface Model : AppViewModel<UiState, SideEffect> {
         fun onEventDispatcher(intent: Intent)
+        fun onInit()
     }
 
     sealed interface UiState {
@@ -23,11 +24,11 @@ interface MainContract {
         suspend fun openTransferScreen()
         suspend fun openNotifications()
         suspend fun openWhatIsThisScreen()
-        suspend fun openCardsScreen(list: List<CardData>)
+//        suspend fun openCardsScreen(list: List<CardData>)
     }
 
     sealed interface SideEffect {
-
+        data class ShowAllCardsDialog(val cardList: List<CardData>) : SideEffect
         data object AddCardDialog : SideEffect
     }
 

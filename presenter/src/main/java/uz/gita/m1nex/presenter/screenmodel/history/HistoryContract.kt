@@ -28,4 +28,8 @@ interface HistoryContract {
 
         data object Init : UiState
     }
+
+    interface Direction {
+        fun openPaymentInfo(child: Child)
+    }
 }

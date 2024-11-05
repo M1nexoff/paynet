@@ -57,6 +57,7 @@ import uz.gita.m1nex.paynet.app.ui.theme.component.Card
 import uz.gita.m1nex.paynet.app.ui.theme.component.ItemCard
 import uz.gita.m1nex.paynet.app.ui.theme.component.TextBoldBlack
 import uz.gita.m1nex.paynet.app.ui.theme.component.WhatIsThisCategoriesSection
+import uz.gita.m1nex.paynet.app.ui.theme.spotColor
 import uz.gita.m1nex.paynet.app.ui.theme.textColorLight90
 import uz.gita.m1nex.paynet.app.ui.theme.white
 import uz.gita.m1nex.presenter.screenmodel.card.CardContract
@@ -87,12 +88,12 @@ class CardScreen(val data: CardData) : Screen,Parcelable {
             }
         }
         DeleteCardDialog(cardPan = cardPan, isVisible = showDialog, setShowDialog = {
-
+            showDialog = it
         }, cancelRequest = {
             showDialog = false
-        }) {
+        },logOutRequest = {
             screenViewModel.onEventDispatcher(CardContract.Intent.DeleteCard(cardIDRemember))
-        }
+        })
 
         PaynetCardContent(
             data = data, uiState = uiState, onEventDispatcher = screenViewModel::onEventDispatcher
@@ -124,11 +125,13 @@ fun PaynetCardContent(
                 modifier = Modifier
                     .padding()
                     .size(24.dp)
-                    .clickable { })
+                    .clickable {
+                        onEventDispatcher.invoke(CardContract.Intent.Back)
+                    })
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = data.name,
+                text = data.name.replace('#',' '),
                 color = textColorLight90,
                 fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
                 fontSize = 22.sp
@@ -157,6 +160,7 @@ fun PaynetCardContent(
                 Card(modifier = Modifier
                     .height(80.dp)
                     .padding(end = 4.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .clickable {
                         onEventDispatcher.invoke(
                             CardContract.Intent.ToP2PScreen(
@@ -167,7 +171,6 @@ fun PaynetCardContent(
                     }
                     .weight(1f)
                     .shadow(elevation = 3.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
                     .background(white),
                     icon = R.drawable.ic_action_plus,
                     text = R.string.fill)
@@ -187,14 +190,16 @@ fun PaynetCardContent(
                     .height(80.dp)
                     .padding(start = 4.dp)
                     .weight(1f)
+                    .clip(RoundedCornerShape(16.dp))
                     .clickable {  }
                     .shadow(elevation = 3.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
                     .background(white),
                     icon = R.drawable.ic_operations_wallet,
                     text = R.string.pay)
             }
-            CardCategoriesSection {
+            CardCategoriesSection(Modifier,{
+                onEventDispatcher.invoke(CardContract.Intent.OpenUpdate(data))
+            }) {
                 onEventDispatcher.invoke(CardContract.Intent.OpenDialog(data.id, data.pan))
             }
         }
@@ -204,7 +209,7 @@ fun PaynetCardContent(
 
 
 @Composable
-fun CardCategoriesSection(modifier: Modifier = Modifier, onDeleteCard: () -> Unit) {
+fun CardCategoriesSection(modifier: Modifier = Modifier,onUpdateCard:()->Unit ,onDeleteCard: () -> Unit) {
     Column(
         modifier = modifier
             .padding(start = 16.dp, end = 16.dp, top = 8.dp)
@@ -229,7 +234,7 @@ fun CardCategoriesSection(modifier: Modifier = Modifier, onDeleteCard: () -> Uni
                     elevation = 2.dp,
                     RoundedCornerShape(16.dp),
                     ambientColor = Color.White,
-                    spotColor = Color(0xFF808080)
+                    spotColor = spotColor
                 )
                 .clip(RoundedCornerShape(16.dp))
                 .background(BackgroundWhite90)
@@ -244,7 +249,7 @@ fun CardCategoriesSection(modifier: Modifier = Modifier, onDeleteCard: () -> Uni
                     .clip(RoundedCornerShape(16.dp))
                     .padding(horizontal = 4.dp, vertical = 8.dp)
                     .clickable {
-
+                        onUpdateCard()
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(

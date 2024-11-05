@@ -32,64 +32,63 @@ import uz.gita.m1nex.paynet.app.ui.theme.pinGreen
 class BottomSheetCallCenterProfile() : Screen {
     @Composable
     override fun Content() {
-        BottomSheetContent()
+        BottomSheetCallCenterContent()
     }
-
-    @Composable
-    fun BottomSheetContent(
-    ) {
-        val modifier: Modifier = Modifier
-        val context = LocalContext.current
-        Column(
-            modifier = modifier
+}
+@Composable
+fun BottomSheetCallCenterContent(
+) {
+    val modifier: Modifier = Modifier
+    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+    )
+    {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .padding(top = 24.dp)
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp)
-        )
-        {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(pinGreen)
-                    .clickable {
+                .height(48.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(pinGreen)
+                .clickable {
 
-                    }
-            ) {
-                Text(
-                    text = "Tel. +998 71-202-07-07",
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
-                    color = Color.White
-                )
-            }
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
-                    .clickable {
-                        val phone = "+998712020707"
-                        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null))
-                        context.startActivity(intent)
-
-                    }
-            ) {
-                Text(
-                    text = "Bekor qilish",
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
-                    color = Color.Black
-                )
-            }
-
-
+                }
+        ) {
+            Text(
+                text = "Tel. +998 71-202-07-07",
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
+                color = Color.White
+            )
         }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                .clickable {
+                    val phone = "+998712020707"
+                    val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null))
+                    context.startActivity(intent)
+
+                }
+        ) {
+            Text(
+                text = "Bekor qilish",
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
+                color = Color.Black
+            )
+        }
+
+
     }
 }

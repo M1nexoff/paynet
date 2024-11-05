@@ -20,6 +20,8 @@ import uz.gita.m1nex.presenter.screenmodel.splash.SplashScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.transfer.TransferScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.transfer.card.TransferCardScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.transfer.verify.TransferVerifyScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.update.CardUpdateScreenModelImpl
+import uz.gita.m1nex.presenter.screenmodel.user.UserDataScreenModelImpl
 import uz.gita.m1nex.presenter.screenmodel.verify.VerifyScreenModelImpl
 
 @Module
@@ -95,4 +97,14 @@ internal interface ScreenModelModule {
     @IntoMap
     @ScreenModelKey(HistoryScreenModelImpl::class)
     fun bindHistoryScreenModelImpl(model: HistoryScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(UserDataScreenModelImpl::class)
+    fun bindUserDataScreenModelImpl(model: UserDataScreenModelImpl): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(CardUpdateScreenModelImpl::class)
+    fun bindCardUpdateScreenModelImpl(model: CardUpdateScreenModelImpl): ScreenModel
 }

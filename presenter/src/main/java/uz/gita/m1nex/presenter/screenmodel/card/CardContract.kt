@@ -12,7 +12,10 @@ interface CardContract {
     }
 
     interface Direction {
+        suspend fun openP2PScreen(pan: String, owner: String)
         suspend fun back()
+        suspend fun backUntilHome()
+        suspend fun openUpdate(card: CardData)
     }
 
     sealed interface UIState {
@@ -29,8 +32,8 @@ interface CardContract {
         data class DeleteCard(val data:String) : Intent
         data class OpenDialog(val cardId:String,val pan:String) : Intent
         data class ToP2PScreen(val pan: String, val owner: String) : Intent
-        data object NavigateBack : Intent
         data object GetCards : Intent
         data object Back : Intent
+        data class OpenUpdate(val card: CardData) : Intent
     }
 }

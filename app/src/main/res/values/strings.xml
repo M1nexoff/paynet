@@ -111,7 +111,7 @@
     <string name="last">Last</string>
     <string name="transaction">Transaction</string>
     <string name="from">from</string>
-    <string name="transfer_to_card">transfer to card</string>
+    <string name="transfer_to_card">Transfer to card</string>
     <string name="to">to</string>
     <string name="commission_0">Commision 0%</string>
     <string name="insufficient_funds">Insufficient funds</string>
@@ -124,5 +124,8 @@
     <string name="transfer_options">Transfer options</string>
     <string name="download_check">Download receipt</string>
     <string name="operation_success">Operation success</string>
+    <string name="you_are_not_verified">You are not Verified</string>
+    <string name="update_data">Update Card</string>
+    <string name="personal_cabinet">Personal Cabinet</string>
 
 </resources>

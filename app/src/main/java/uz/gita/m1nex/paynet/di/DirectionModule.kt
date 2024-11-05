@@ -17,6 +17,8 @@ import uz.gita.m1nex.paynet.app.screen.signup.SignUpDirectionImpl
 import uz.gita.m1nex.paynet.app.screen.splash.SplashDirectionImpl
 import uz.gita.m1nex.paynet.app.screen.transfer.card.TransferCardDirectionImpl
 import uz.gita.m1nex.paynet.app.screen.transfer.verify.TransferVerifyDirectionImpl
+import uz.gita.m1nex.paynet.app.screen.update.CardUpdateDirectionImpl
+import uz.gita.m1nex.paynet.app.screen.user.UserDataDirectionImpl
 import uz.gita.m1nex.presenter.screenmodel.addcard.AddCardContract
 import uz.gita.m1nex.presenter.screenmodel.card.CardContract
 import uz.gita.m1nex.presenter.screenmodel.home.HomeContract
@@ -29,6 +31,8 @@ import uz.gita.m1nex.presenter.screenmodel.splash.SplashContract
 import uz.gita.m1nex.presenter.screenmodel.transfer.TransferContract
 import uz.gita.m1nex.presenter.screenmodel.transfer.card.TransferCardContract
 import uz.gita.m1nex.presenter.screenmodel.transfer.verify.TransferVerifyContract
+import uz.gita.m1nex.presenter.screenmodel.update.CardUpdateContract
+import uz.gita.m1nex.presenter.screenmodel.user.UserDataContract
 import uz.gita.m1nex.presenter.screenmodel.verify.VerifyContract
 
 @Module
@@ -72,4 +76,10 @@ interface DirectionModule {
 
     @Binds
     fun transferVerifyDirection(impl: TransferVerifyDirectionImpl): TransferVerifyContract.Direction
+
+    @Binds
+    fun userDataDirection(impl: UserDataDirectionImpl): UserDataContract.Direction
+
+    @Binds
+    fun cardUpdateDirection(impl: CardUpdateDirectionImpl): CardUpdateContract.Direction
 }

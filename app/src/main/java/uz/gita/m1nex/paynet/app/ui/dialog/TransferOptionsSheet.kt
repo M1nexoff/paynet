@@ -1,11 +1,14 @@
 package uz.gita.m1nex.paynet.app.ui.dialog
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,24 +59,29 @@ class TransferOptionsSheet(val child: Child, private val onDismiss: () -> Unit) 
     override fun Content() {
 
         PaynetOfficialTheme {
-            TransferOptionSheetContent(child = child) {
+            Box{
+                TransferOptionSheetContent(child = child) {
 
-                onDismiss.invoke()
-            }
-        }
+                    onDismiss.invoke()
+                }
+            }        }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun TransferOptionSheetContent(
+fun BoxScope.TransferOptionSheetContent(
     child: Child,
     onDismiss: () -> Unit,
 ) {
+    BackHandler {
+        onDismiss.invoke()
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .align(Alignment.BottomCenter)
             .fillMaxWidth()
+            .background(Color.White)
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -176,15 +184,19 @@ private fun TransferOptionSheetContent(
                 .background(BackgroundWhite90)
                 .padding(start = 10.dp, top = 16.dp, end = 10.dp, bottom = 16.dp)
         ) {
-            ItemTransferOption(firstData = "Yuboruvchi", secondData = "**** **** **** ${child.from}")
-            ItemTransferOption(
-                firstData = "Yuboruvchining ismi", secondData = "m1nex Maqsudov"
-            )
-            ItemTransferOption(firstData = "Qabul qiluvchi", secondData = "**** **** **** ${child.to}")
-            ItemTransferOption(
-                firstData = "Qabul qiluvchining nomi", secondData = "Muhammadrizo G'aniyev"
-            )
-            ItemTransferOption(firstData = "Tranzaksiya raqami", secondData = "233247782")
+            ItemTransferOption(firstData = "Yuboruvchi", secondData = if(child.type == "income") "**** **** **** ${child.from.takeLast(4)}" else child.from)
+            if (child.type == "outcome"){
+                ItemTransferOption(
+                    firstData = "Yuboruvchining ismi", secondData = "${child.to}"
+                )
+            }
+            ItemTransferOption(firstData = "Qabul qiluvchi", secondData = if(child.type == "income") "**** **** **** ${child.to.takeLast(4)}" else child.to)
+//            if (child.type == "income"){
+//                ItemTransferOption(
+//                    firstData = "Qabul qiluvchining ismi", secondData = "Muhammadrizo G'aniyev"
+//                )
+//            }
+            ItemTransferOption(firstData = "Tranzaksiya raqami", secondData = "${child.time}")
         }
 
 
@@ -217,13 +229,14 @@ fun ItemTransferOption(firstData: String, secondData: String) {
 
 private fun CharSequence.toFormat(int: Int): String {
     val sb = StringBuilder()
+    val text = reversed()
     for (i in indices) {
         if (i % 3 == 0 && i != 0) {
             sb.append(" ")
         }
-        sb.append(this[i])
+        sb.append(text[i])
     }
-    return sb.toString()
+    return sb.toString().reversed()
 }
 
 

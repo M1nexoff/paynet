@@ -97,3 +97,5 @@ val iconColorPaleBlack = Color(0xFF6F747A)
 val grayText90 = Color(0xff6e7379)
 val grayText70 = Color(0xff999a9c)
 val greenText = Color(0xff00803b)
+
+val spotColor = Color(0xFF808080)

@@ -1,6 +1,7 @@
 package uz.gita.m1nex.paynet.app.screen.profile
 
 import uz.gita.m1nex.paynet.app.screen.signup.SignUpScreen
+import uz.gita.m1nex.paynet.app.screen.user.UserDataScreen
 import uz.gita.m1nex.paynet.navigation.AppNavigator
 import uz.gita.m1nex.presenter.screenmodel.profile.ProfileContract
 import javax.inject.Inject
@@ -14,5 +15,9 @@ class ProfileDirectionImpl @Inject constructor(
 
     override suspend fun navigateToSignUp() {
         navigator.replaceAll(SignUpScreen())
+    }
+
+    override suspend fun navigateToUpdate() {
+        navigator.navigateTo(UserDataScreen())
     }
 }

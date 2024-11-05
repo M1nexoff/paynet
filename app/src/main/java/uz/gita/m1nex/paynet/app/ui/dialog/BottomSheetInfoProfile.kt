@@ -41,82 +41,82 @@ import uz.gita.m1nex.paynet.app.ui.theme.pinGreen
 class BottomSheetInfoProfile() : Screen {
     @Composable
     override fun Content() {
-        BottomSheetContent()
+        BottomSheetInfoContent()
     }
 
-    @Composable
-    fun BottomSheetContent(
-    ) {
-        val modifier: Modifier = Modifier
-        val context = LocalContext.current
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp)
+}
+@Composable
+fun BottomSheetInfoContent(
+) {
+    val modifier: Modifier = Modifier
+    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+    )
+    {
+        Text(
+            text = stringResource(id = R.string.want_paynet_to_you),
+            fontSize = 18.sp,
+            fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
+            color = Color.Black,
+            modifier = Modifier
         )
-        {
+
+        Text(
+            text = stringResource(id = R.string.sheet_info_description),
+            fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pnfont_medium)),
+            color = Color(0xFF6D6D6D),
+            modifier = Modifier.padding(top = 12.dp)
+        )
+
+
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(pinGreen)
+                .clickable {
+
+                }
+        ) {
             Text(
-                text = stringResource(id = R.string.want_paynet_to_you),
-                fontSize = 18.sp,
+                text = stringResource(id = R.string.all_ok),
+                fontSize = 12.sp,
                 fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
-                color = Color.Black,
-                modifier = Modifier
+                color = Color.White
             )
-
-            Text(
-                text = stringResource(id = R.string.sheet_info_description),
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.pnfont_medium)),
-                color = Color(0xFF6D6D6D),
-                modifier = Modifier.padding(top = 12.dp)
-            )
-
-
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(pinGreen)
-                    .clickable {
-
-                    }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.all_ok),
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
-                    color = Color.White
-                )
-            }
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
-                    .clickable {
-                        val uri =
-                            "https://play.google.com/store/apps/details?id=uz.paynet.app&hl=uz"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                        context.startActivity(intent)
-                    }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.some_bad),
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
-                    color = Color.Black
-                )
-            }
-
-
         }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                .clickable {
+                    val uri =
+                        "https://play.google.com/store/apps/details?id=uz.paynet.app&hl=uz"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                    context.startActivity(intent)
+                }
+        ) {
+            Text(
+                text = stringResource(id = R.string.some_bad),
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pnfont_semibold)),
+                color = Color.Black
+            )
+        }
+
+
     }
 }

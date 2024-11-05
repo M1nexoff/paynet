@@ -50,7 +50,7 @@ class OptionBottomSheetDialog(
 }
 
 @Composable
-private fun OptionBottomSheetContent(
+fun OptionBottomSheetContent(
     onFirst: () -> Unit,
     onSecond: () -> Unit,
     onThird: () -> Unit

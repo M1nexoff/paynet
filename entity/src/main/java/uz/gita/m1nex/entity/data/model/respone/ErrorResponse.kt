@@ -1,4 +1,4 @@
-package uz.gita.m1nex.entity.data.model.respone
+package uz.gita.m1nex.core.data.model
 
 internal data class ErrorResponse(
     val status : Int?,

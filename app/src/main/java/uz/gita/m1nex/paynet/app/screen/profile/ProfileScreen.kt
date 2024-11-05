@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,24 +48,22 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import cafe.adriel.voyager.core.lifecycle.LocalNavigatorScreenLifecycleProvider
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.m1nex.core.hiltScreenModel
 import uz.gita.m1nex.paynet.R
+import uz.gita.m1nex.paynet.app.ui.dialog.BottomSheetCallCenterContent
 import uz.gita.m1nex.paynet.app.ui.dialog.BottomSheetCallCenterProfile
+import uz.gita.m1nex.paynet.app.ui.dialog.BottomSheetInfoContent
 import uz.gita.m1nex.paynet.app.ui.dialog.BottomSheetInfoProfile
 import uz.gita.m1nex.paynet.app.ui.dialog.LogOutDialog
+import uz.gita.m1nex.paynet.app.ui.dialog.OptionBottomSheetContent
 import uz.gita.m1nex.paynet.app.ui.dialog.OptionBottomSheetDialog
 import uz.gita.m1nex.paynet.app.ui.theme.BackgroundLight
 import uz.gita.m1nex.paynet.app.ui.theme.BackgroundWhite90
 import uz.gita.m1nex.paynet.app.ui.theme.Gray70
-import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
 import uz.gita.m1nex.paynet.app.ui.theme.textColorLight
 import uz.gita.m1nex.paynet.app.ui.theme.textColorLight80
 import uz.gita.m1nex.paynet.app.ui.theme.textColorLight90
@@ -71,52 +71,65 @@ import uz.gita.m1nex.presenter.screenmodel.profile.ProfileContract
 
 
 class ProfileScreen : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val screenViewModel: ProfileContract.Model = hiltScreenModel()
         val uiState = screenViewModel.collectAsState()
         val context = LocalContext.current
         val bottomSheetNavigator = LocalNavigator.current
+        val showDialog = remember { mutableStateOf(0) }
         screenViewModel.collectSideEffect {
             when (it) {
                 ProfileContract.SideEffect.OpenRankSheet -> {
-                    "ProfileContract.SideEffect.OpenRankSheet dan viewmodeldan xabar keldi"
-                    bottomSheetNavigator?.push(
-                        BottomSheetInfoProfile()
-                    )
+                    showDialog.value = 1
                 }
 
                 ProfileContract.SideEffect.OpenCallSheet -> {
-                    "ProfileContract.SideEffect.OpenRankSheet dan viewmodeldan xabar keldi"
-                    bottomSheetNavigator?.push(
-                        BottomSheetCallCenterProfile()
-                    )
+                    showDialog.value = 2
                 }
 
                 ProfileContract.SideEffect.OpenInfoSheet -> {
-                    "ProfileContract.SideEffect.OpenRankSheet dan viewmodeldan xabar keldi"
-                    bottomSheetNavigator?.push(
-                        OptionBottomSheetDialog(
-                            onFirst = {
-                                val uri =
-                                    "https://assets-global.website-files.com/63a7038e6eb0c1f38cd4d11f/659e7e324fed06afd1dbacfb_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D0%BA%D0%B0%202024.pdf"
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                                context.startActivity(intent)
-                            }, onSecond = {
-                                val uri =
-                                    "https://assets-global.website-files.com/63a7038e6eb0c1f38cd4d11f/6602de34fdf497829debb1df_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D1%84%D0%B8%D0%BD%D0%B0%D0%BB%20final.pdf"
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                                context.startActivity(intent)
-                            }, onThird = {
-                                val uri =
-                                    "https://uploads-ssl.webflow.com/63a7038e6eb0c1f38cd4d11f/64b8ecef9bd4e117c602cbc9_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D0%BA%D0%BE%D1%88%D0%B5%D0%BB%D1%8C%D0%BA%D0%B0%20(2).pdf"
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                                context.startActivity(intent)
-                            })
-                    )
+                    showDialog.value = 3
                 }
 
                 else -> {}
+            }
+        }
+        when (showDialog.value) {
+            0 -> {}
+            1 -> {
+                ModalBottomSheet(onDismissRequest = { showDialog.value = 0 }) {
+                    BottomSheetInfoContent()
+                }
+            }
+
+            2 -> {
+                ModalBottomSheet(onDismissRequest = { showDialog.value = 0 }) {
+                    BottomSheetCallCenterContent()
+                }
+            }
+
+            3 -> {
+                ModalBottomSheet(onDismissRequest = { showDialog.value = 0 }) {
+                    OptionBottomSheetContent(
+                        onFirst = {
+                            val uri =
+                                "https://assets-global.website-files.com/63a7038e6eb0c1f38cd4d11f/659e7e324fed06afd1dbacfb_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D0%BA%D0%B0%202024.pdf"
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                            context.startActivity(intent)
+                        }, onSecond = {
+                            val uri =
+                                "https://assets-global.website-files.com/63a7038e6eb0c1f38cd4d11f/6602de34fdf497829debb1df_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D1%84%D0%B8%D0%BD%D0%B0%D0%BB%20final.pdf"
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                            context.startActivity(intent)
+                        }, onThird = {
+                            val uri =
+                                "https://uploads-ssl.webflow.com/63a7038e6eb0c1f38cd4d11f/64b8ecef9bd4e117c602cbc9_%D0%BE%D1%84%D0%B5%D1%80%D1%82%D0%B0%20%D0%BA%D0%BE%D1%88%D0%B5%D0%BB%D1%8C%D0%BA%D0%B0%20(2).pdf"
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                            context.startActivity(intent)
+                        })
+                }
             }
         }
         ProfileScreenContent(
@@ -241,7 +254,7 @@ class ProfileScreen : Screen {
         )
         {
             Text(
-                text = "phoneNumber",
+                text = stringResource(R.string.you_are_not_verified),
                 color = textColorLight,
                 fontFamily = FontFamily(Font(R.font.pnfont_medium)),
                 fontSize = 18.sp,

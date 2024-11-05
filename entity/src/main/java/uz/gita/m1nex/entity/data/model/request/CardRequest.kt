@@ -11,12 +11,3 @@ data class AddCardRequest(
     val expiredMonth: String,
     val name: String
 )
-@Keep
-data class UpdateCardRequest(
-    val id: Long,
-    val name: String,
-    @SerializedName("theme-type")
-    val themeType: Int,
-    @SerializedName("is-visible")
-    val isVisible: Boolean
-)

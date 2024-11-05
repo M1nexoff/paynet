@@ -57,7 +57,7 @@
 -keep class uz.gita.m1nex.entity.di.*
 -keep class uz.gita.m1nex.entity.** { *; }
 -keep class uz.gita.m1nex.entity.data.model.request.** { *; }
--keep class uz.gita.m1nex.entity.data.model.respone.** { *; }
+-keep class uz.gita.m1nex.core.data.model.** { *; }
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
 # EnclosingMethod is required to use InnerClasses.
 -keepattributes Signature, InnerClasses, EnclosingMethod

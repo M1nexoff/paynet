@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,7 +28,7 @@ import uz.gita.m1nex.paynet.app.ui.theme.textColor
 
 @Composable
 fun CardP2PSendItem(
-    cardNumber: CardData,
+    cardNumber: State<CardData>,
     modifier: Modifier, onClickItem: () -> Unit,
 ) {
     ElevatedCard(
@@ -53,11 +54,11 @@ fun CardP2PSendItem(
                     .padding(start = 2.dp)
             ) {
                 Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                    Text(text = cardNumber.owner, fontSize = 18.sp)
+                    Text(text = cardNumber.value.owner, fontSize = 18.sp)
                 }
 
                 Row(modifier = Modifier.padding(bottom = 4.dp)) {
-                    Text(text = "•••• •••• •••• ${cardNumber.pan}", color = textColor)
+                    Text(text = "•••• •••• •••• ${cardNumber.value.pan}", color = textColor)
                 }
             }
 

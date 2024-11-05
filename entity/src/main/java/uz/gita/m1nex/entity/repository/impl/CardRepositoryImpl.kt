@@ -6,7 +6,7 @@ import uz.gita.m1nex.core.ResultData
 import uz.gita.m1nex.core.data.model.card.AddCard
 import uz.gita.m1nex.entity.data.model.request.AddCardRequest
 import uz.gita.m1nex.core.data.model.card.CardData
-import uz.gita.m1nex.entity.data.model.request.UpdateCardRequest
+import uz.gita.m1nex.core.data.model.card.UpdateCardRequest
 import uz.gita.m1nex.core.withContextSafety
 import uz.gita.m1nex.entity.data.local.LocalStorage
 import uz.gita.m1nex.entity.data.remote.CardApi
@@ -21,13 +21,16 @@ internal class CardRepositoryImpl @Inject constructor(
     private val localStorage: LocalStorage,
     private val gson: Gson
 ) : CardRepository {
-    override suspend fun getCards(): ResultData<List<CardData>> = withContextSafety(Dispatchers.IO){
-        cardApi.getCards()
-            .toResultData()
-            .mapTo {
-                localStorage.cards = gson.toJson(it)
+    override suspend fun getCards(isCache: Boolean): ResultData<List<CardData>> = withContextSafety(Dispatchers.IO){
+        if (isCache){
+            cardApi.getCardsCache().toResultData().mapTo {
                 it
             }
+        }else{
+            cardApi.getCards().toResultData().mapTo {
+                it
+            }
+        }
     }
 
     override suspend fun addCard(addCard: AddCard): ResultData<Unit> = withContextSafety(Dispatchers.IO){
@@ -44,7 +47,7 @@ internal class CardRepositoryImpl @Inject constructor(
             .mapTo {  }
     }
 
-    override suspend fun deleteCard(cardId: Int): ResultData<Unit> = withContextSafety(Dispatchers.IO){
+    override suspend fun deleteCard(cardId: String): ResultData<Unit> = withContextSafety(Dispatchers.IO){
         cardApi.deleteCard(cardId)
             .toResultData()
             .mapTo {  }

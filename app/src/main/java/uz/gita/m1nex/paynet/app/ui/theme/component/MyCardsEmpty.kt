@@ -314,7 +314,7 @@ fun MyCardsMoreCards(
             Icon(
                 painter = painterResource(id = R.drawable.ic_chevron_right_x24),
                 contentDescription = null,
-                tint = Color(0xFF1A1818),
+                tint = Color.Black,
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .size(24.dp)

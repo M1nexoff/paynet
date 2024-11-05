@@ -15,16 +15,6 @@ data class BasicInfoResponse(
     val age: Int
 )
 
-data class FullInfoResponse(
-    @SerializedName("born-date")
-    val bornDate: Long,
-    @SerializedName("first-name")
-    val firstName: String,
-    val gender: Int,
-    @SerializedName("last-name")
-    val lastName: String,
-    val phone: String
-)
 
 data class LastTransfersResponse(
     val type: String,

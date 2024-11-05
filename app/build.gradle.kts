@@ -33,8 +33,8 @@ android {
     }
     buildTypes {
         release {
+            isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -118,9 +118,9 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
 
     //Paging
-    val paging_version = "3.3.0"
+    val paging_version = "3.3.2"
     implementation("androidx.paging:paging-runtime:$paging_version")
-    implementation("androidx.paging:paging-compose:3.3.0")
+    implementation("androidx.paging:paging-compose:$paging_version")
 
 }
 kapt {

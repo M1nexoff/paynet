@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.tooling.preview.Preview
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.ScaleTransition
 import dagger.hilt.android.AndroidEntryPoint
 import uz.gita.m1nex.paynet.app.screen.splash.SplashScreen
 import uz.gita.m1nex.paynet.app.ui.theme.PaynetOfficialTheme
@@ -46,10 +47,16 @@ class MainActivity : ComponentActivity() {
                                 it(navigator)
                             }
                     }
+//                    ScaleTransition(navigator = navigator)
                     CurrentScreen()
                 }
             }
         }
+    }
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

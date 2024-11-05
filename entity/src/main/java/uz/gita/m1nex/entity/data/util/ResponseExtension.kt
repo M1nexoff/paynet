@@ -12,7 +12,7 @@ import uz.gita.m1nex.core.fail
 import uz.gita.m1nex.core.isSuccess
 import uz.gita.m1nex.core.success
 import uz.gita.m1nex.entity.R
-import uz.gita.m1nex.entity.data.model.respone.BaseResponse
+import uz.gita.m1nex.core.data.model.BaseResponse
 
 internal fun <T> Response<BaseResponse<T>>.toResultData(): ResultData<T> {
     val code = code()

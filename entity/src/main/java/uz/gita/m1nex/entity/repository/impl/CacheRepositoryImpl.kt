@@ -11,33 +11,38 @@ import uz.gita.m1nex.core.data.model.transfer.LastTransferData
 import uz.gita.m1nex.core.success
 import uz.gita.m1nex.core.withContextSafety
 import uz.gita.m1nex.entity.data.local.LocalStorage
+import uz.gita.m1nex.entity.data.remote.HomeApi
 import uz.gita.m1nex.entity.data.room.AppDatabase
+import uz.gita.m1nex.entity.data.util.mapTo
+import uz.gita.m1nex.entity.data.util.toResultData
 import uz.gita.m1nex.entity.repository.CacheRepository
 import javax.inject.Inject
 
 internal class CacheRepositoryImpl @Inject constructor(
     private val localStorage: LocalStorage,
     private val gson: Gson,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val homeApi: HomeApi
 ) : CacheRepository {
     private val lastTransferDao = appDatabase.lastTransferDao()
-    override suspend fun getTotalBalance(): ResultData<Int> = withContextSafety(Dispatchers.IO){
-        ResultData.Success(localStorage.totalBalance)
-    }
-
-    override suspend fun getBasicUserInfo(): ResultData<BasicInfoResponse> = withContextSafety(Dispatchers.IO){
-        ResultData.Success(BasicInfoResponse(localStorage.firstName, localStorage.genderType, localStorage.age))
-    }
-
-    override suspend fun getCards(): ResultData<List<CardData>> = withContextSafety(Dispatchers.IO) {
-        ResultData.success(
-            if (localStorage.cards.isNotEmpty())
-                // Deserialize the stored JSON into a list of CardData
-                gson.fromJson(localStorage.cards, object : TypeToken<List<CardData>>() {}.type)
-            else
-                emptyList<CardData>()
-        )
-    }
+//    override suspend fun getTotalBalance(): ResultData<Int> = withContextSafety(Dispatchers.IO){
+//        homeApi.getTotalBalanceCache().toResultData().mapTo {
+//            it.totalBalance
+//        }
+//    }
+//
+//    override suspend fun getBasicUserInfo(): ResultData<BasicInfoResponse> = withContextSafety(Dispatchers.IO){
+//        ResultData.Success(BasicInfoResponse(localStorage.firstName, localStorage.genderType, localStorage.age))
+//    }
+//
+//    override suspend fun getCards(isCache: Boolean): ResultData<List<CardData>> = withContextSafety(Dispatchers.IO) {
+//        ResultData.success(
+//            if (localStorage.cards.isNotEmpty())
+//                gson.fromJson(localStorage.cards, object : TypeToken<List<CardData>>() {}.type)
+//            else
+//                emptyList<CardData>()
+//        )
+//    }
 
     override suspend fun getLastTransfers(): ResultData<List<LastTransferData>> = withContext(Dispatchers.IO) {
         ResultData.Success(

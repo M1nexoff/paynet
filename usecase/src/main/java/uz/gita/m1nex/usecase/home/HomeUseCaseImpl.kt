@@ -5,9 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import uz.gita.m1nex.core.ResultData
 import uz.gita.m1nex.core.data.model.BasicInfo
 import uz.gita.m1nex.core.flowWithCatch
-import uz.gita.m1nex.entity.data.model.request.UpdateInfoRequest
-import uz.gita.m1nex.entity.data.model.respone.BasicInfoResponse
-import uz.gita.m1nex.entity.data.model.respone.FullInfoResponse
+import uz.gita.m1nex.core.data.model.UpdateInfoRequest
+import uz.gita.m1nex.core.data.model.FullInfoResponse
+import uz.gita.m1nex.core.onSuccess
+import uz.gita.m1nex.core.success
 import uz.gita.m1nex.entity.data.model.respone.LastTransfersResponse
 import uz.gita.m1nex.entity.repository.CacheRepository
 import uz.gita.m1nex.entity.repository.HomeRepository
@@ -18,11 +19,11 @@ internal class HomeUseCaseImpl @Inject constructor(
     private val cache: CacheRepository
 ) : HomeUseCase {
     override fun getTotalBalance(): Flow<ResultData<Int>> = flowWithCatch {
-        val result2 = cache.getTotalBalance()
-        emit(result2)
-
-        delay(1000)
-        val result = repository.getTotalBalance()
+        repository.getTotalBalance(true).onSuccess {
+            emit(ResultData.success(this))
+        }
+        delay(3000)
+        val result = repository.getTotalBalance(false)
         emit(result)
     }
 
@@ -39,8 +40,11 @@ internal class HomeUseCaseImpl @Inject constructor(
 //        val balance = result2.await()
 //        emit(ResultData.success(BalanceAndName(name, result.await())))
 
-        val result = repository.getBasicUserInfo()
-        emit(result)
+        val result = repository.getBasicUserInfo(true).onSuccess {
+            emit(ResultData.Success(this))
+        }
+        delay(3000)
+        emit(repository.getBasicUserInfo())
     }
 
     override fun getFullUserInfo(): Flow<ResultData<FullInfoResponse>> = flowWithCatch {
@@ -55,6 +59,15 @@ internal class HomeUseCaseImpl @Inject constructor(
 
     override fun updateUserInfo(updateUserInfoRequest: UpdateInfoRequest): Flow<ResultData<Unit>> = flowWithCatch {
         val result = repository.updateUserInfo(updateUserInfoRequest)
+        emit(result)
+    }
+
+    override fun isVerified(): Flow<ResultData<Boolean>> = flowWithCatch {
+        val result = repository.getUserVerified()
+        emit(result)
+    }
+    override fun setVerified(): Flow<ResultData<Unit>> = flowWithCatch {
+        val result = repository.setUserVerified()
         emit(result)
     }
 }

@@ -9,7 +9,7 @@ import uz.gita.m1nex.entity.data.model.request.SignInVerifyRequest
 import uz.gita.m1nex.entity.data.model.request.SignUpVerifyRequest
 import uz.gita.m1nex.entity.data.model.request.TokenRequest
 import uz.gita.m1nex.entity.data.model.request.UpdateTokenRequest
-import uz.gita.m1nex.entity.data.model.respone.*
+import uz.gita.m1nex.core.data.model.*
 
 internal interface AuthApi {
 

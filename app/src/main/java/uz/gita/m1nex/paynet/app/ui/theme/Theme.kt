@@ -45,23 +45,23 @@ fun PaynetOfficialTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
-    val systemUiController = rememberSystemUiController()
-    if(darkTheme){
-        systemUiController.setSystemBarsColor(
-            color = Color.DarkGray
-        )
-    }else{
-        systemUiController.setSystemBarsColor(
-            color = Color(red = 230, green = 224, blue = 233)
-        )
-    }
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
+    val systemUiController = rememberSystemUiController()
+    if(darkTheme){
+        systemUiController.setSystemBarsColor(
+            color = Color.White
+        )
+    }else{
+        systemUiController.setSystemBarsColor(
+            color = Color.White
+        )
+    }
+
+
 }
 
     fun setLanguage(language: Locale, context: Context){

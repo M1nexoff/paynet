@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uz.gita.m1nex.core.data.model.Child
+import uz.gita.m1nex.core.toFormat
 import uz.gita.m1nex.paynet.R
 import uz.gita.m1nex.paynet.app.ui.theme.textColor
 
@@ -72,7 +73,7 @@ fun HistoryIncomeTransactionItem(
                             fontSize = 16.sp,
                             color = Color.Black)
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "${data.amount} so'm", fontSize = 16.sp, color = Color.Black)
+                        Text(text = "${data.amount.toString().toFormat(3)} so'm", fontSize = 16.sp, color = Color.Black)
                     }
 
                     Row(

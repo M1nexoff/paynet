@@ -78,11 +78,12 @@ fun DeleteCardDialog(
                             modifier = Modifier
                                 .height(36.dp)
                                 .clip(RoundedCornerShape(18.dp))
-                                .background(grayLight)
-                                .padding(horizontal = 16.dp)
                                 .clickable {
                                     cancelRequest.invoke()
-                                }, verticalAlignment = Alignment.CenterVertically
+                                }
+                                .background(grayLight)
+                                .padding(horizontal = 16.dp)
+                                , verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextBoldBlack(
                                 text = stringResource(id = R.string.cancel),
@@ -95,11 +96,12 @@ fun DeleteCardDialog(
                             modifier = Modifier
                                 .height(36.dp)
                                 .clip(RoundedCornerShape(18.dp))
-                                .background(grayLight)
-                                .padding(horizontal = 16.dp)
                                 .clickable {
                                     logOutRequest.invoke()
-                                }, verticalAlignment = Alignment.CenterVertically
+                                }
+                                .background(grayLight)
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextBoldBlack(
                                 text = stringResource(id = R.string.delete),
@@ -121,11 +123,11 @@ private fun TransferOptionSheetContentPreview() {
     PaynetOfficialTheme {
         val showDialog = remember { mutableStateOf(false) }
 
-        LogOutDialog(setShowDialog = {
+        DeleteCardDialog(setShowDialog = {
             showDialog.value = it
-        }, isVisible = false, logOutRequest = {}, cancelRequest = {
+        }, isVisible = true, logOutRequest = {}, cancelRequest = {
 
-        })
+        }, cardPan = "8327")
     }
 
 }

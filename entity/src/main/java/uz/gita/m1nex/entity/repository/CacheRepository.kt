@@ -6,9 +6,9 @@ import uz.gita.m1nex.core.data.model.card.CardData
 import uz.gita.m1nex.core.data.model.transfer.LastTransferData
 
 interface CacheRepository {
-    suspend fun getTotalBalance() : ResultData<Int>
-    suspend fun getBasicUserInfo() : ResultData<BasicInfoResponse>
-    suspend fun getCards() : ResultData<List<CardData>>
+//    suspend fun getTotalBalance() : ResultData<Int>
+//    suspend fun getBasicUserInfo() : ResultData<BasicInfoResponse>
+//    suspend fun getCards(isCache: Boolean = false) : ResultData<List<CardData>>
     suspend fun getLastTransfers() : ResultData<List<LastTransferData>>
     suspend fun deleteAllLastTransfer() : ResultData<Unit>
 }

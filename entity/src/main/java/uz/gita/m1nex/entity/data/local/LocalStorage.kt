@@ -9,6 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class LocalStorage @Inject constructor(@ApplicationContext context: Context) : SharedPreference(context) {
+    var isVerified by booleans(false)
     var isFirstRun: Boolean by booleans(true)
     var isSignIn: Boolean by booleans(false)
     var token: String by strings("")

@@ -5,19 +5,31 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PUT
-import uz.gita.m1nex.entity.data.model.request.UpdateInfoRequest
+import uz.gita.m1nex.core.data.model.UpdateInfoRequest
 import uz.gita.m1nex.entity.data.model.respone.BasicInfoResponse
-import uz.gita.m1nex.entity.data.model.respone.FullInfoResponse
+import uz.gita.m1nex.core.data.model.FullInfoResponse
+import uz.gita.m1nex.entity.data.local.ForceLocalCache
+import uz.gita.m1nex.entity.data.local.ForceNetwork
+import uz.gita.m1nex.entity.data.local.LocalCacheControl
 import uz.gita.m1nex.entity.data.model.respone.LastTransfersResponse
 import uz.gita.m1nex.entity.data.model.respone.TotalBalanceResponse
 import uz.gita.m1nex.entity.data.model.respone.UpdateInfoResponse
 
 internal interface HomeApi {
+    @ForceNetwork
     @GET("v1/home/total-balance")
     suspend fun getTotalBalance(): Response<TotalBalanceResponse>
 
+    @ForceLocalCache
+    @GET("v1/home/total-balance")
+    suspend fun getTotalBalanceCache(): Response<TotalBalanceResponse>
+
+    @ForceNetwork
+    @GET("v1/home/user-info") suspend fun getBasicInfo(): Response<BasicInfoResponse>
+
+    @ForceLocalCache
     @GET("v1/home/user-info")
-    suspend fun getBasicInfo(): Response<BasicInfoResponse>
+    suspend fun getBasicInfoCache(): Response<BasicInfoResponse>
 
     @GET("v1/home/user-info/details")
     suspend fun getFullInfo(): Response<FullInfoResponse>
